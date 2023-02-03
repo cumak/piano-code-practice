@@ -1,0 +1,8 @@
+.categorySection{
+  & + &{
+    margin-top: 10px;
+  }
+  &-name{
+    margin-right: 10px;
+  }
+}

@@ -1,0 +1,37 @@
+
+.loginForm{
+  position: fixed;
+  top: 20%;
+  left: calc(50% - 300px);
+  max-width: 600px;
+  width: 100%;
+  padding: 30px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.formItem{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  & + &{
+    margin-top: 10px;
+  }
+  &-label{
+    display: block;
+    width: 30%;
+    font-size: 1.6rem;
+  }
+  &-input{
+    display: block;
+    width: 50%;
+    input{
+      width: 100%;
+    }
+  }
+}
+
+.formBtn{
+  margin-top: 10px;
+  text-align: center;
+}

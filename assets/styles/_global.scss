@@ -1,0 +1,116 @@
+@use 'variable' as v;
+
+//ベースフォント=10px(計算を簡単にするため)
+html {
+	font-size: 62.5%;
+	scroll-behavior: smooth;
+	@include v.sp{
+		font-size: 65%;
+	}
+}
+
+body{
+	font-size:1.4rem;
+	color: v.$fontColor;
+	@include v.font-go;
+	-webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: 100%;
+}
+
+.pc{
+	@include v.sp{
+		display: none !important;
+	}
+}
+
+.sp{
+	@include v.pc-tab{
+		display: none !important;
+	}
+}
+
+.clearfix:after {
+  content: "";
+  clear: both;
+  display: block;
+}
+
+img{
+	max-width:100%;
+	vertical-align: bottom;
+}
+
+a{
+	color: v.$fontColor;
+	text-decoration:none;
+	transition:all 0.3s;
+	img{
+		opacity:1;
+		transition:all 0.3s;
+	}
+
+	@include v.pc-tab{
+		&:hover{
+				img{
+					opacity:0.8;
+				}
+		}
+	}
+	@include v.sp{
+		&:active{
+				img{
+					opacity:0.8;
+				}
+		}
+	}
+}
+
+p{
+	line-height:190%;
+	& + p{
+		margin-top: 1.2rem;
+	}
+	a{
+		@include v.pc-tab{
+			&:hover{
+				color: v.$linkColor;
+			}
+		}
+		@include v.sp{
+			&:active{
+				color: v.$linkColor;
+			}
+		}
+	}
+}
+
+ol{
+	padding-left: 2rem;
+}
+
+ruby rt{
+	font-size:40%;
+}
+
+em{
+	color:#e13838;
+}
+
+input[type=text],
+input[type=tel],
+input[type=email],
+input[type=password],
+textarea{
+  appearance: none;
+  padding: 8px 10px;
+	border: 1px solid  #b7b7b7;
+}
+select{
+	padding: 8px 10px;
+	border: 1px solid  #b7b7b7;
+}
+textarea{
+  width: 100%;
+  height: 200px;
+}

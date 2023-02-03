@@ -1,0 +1,44 @@
+@use 'assets/styles/variable' as v;
+.myWaon{
+  display: flex;
+  flex-wrap:wrap;
+  margin: 170px auto;
+  padding: 0 5%;
+  &-gosen{
+    width: 32%;
+    &:not(:nth-child(3n + 1)){
+      margin-left: 2%;
+    }
+    &:nth-child(n + 4){
+      margin-top: 140px;
+    }
+  }
+}
+
+.myWaonBtns{
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 10px 15px;
+  align-items: center;
+  &-l{
+    display: flex;
+    gap: 0 5px;
+  }
+  &-btn{
+    >span{
+      padding: 3px 10px;
+      font-size: 1.6rem;
+      height: auto;
+    }
+  }
+}
+
+.categoryIcon{
+  display: inline-block;
+  background: #f9f9ef;
+  border: 1px solid #90dacd;
+  font-size: 1.2rem;
+  padding: 1px 10px;
+  border-radius: 3px;
+  color: #31a28e;
+}

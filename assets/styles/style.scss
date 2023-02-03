@@ -1,0 +1,26 @@
+@forward 'variable';
+
+//リセット
+@forward 'reset';
+
+//共通（グローバル）
+@forward 'global';
+
+//共通（細かいパーツ）
+//@import 'component/**/*';
+@forward 'component/btn';
+@forward 'component/title';
+@forward 'component/onpu';
+@forward 'component/modal';
+
+//共通（案件毎の共通エリア）
+@import 'common/common';
+@import 'common/header';
+
+//各ページ
+@import 'pages/top';
+@import 'pages/start';
+@import 'pages/add';
+@import 'pages/login-signup';
+@import 'pages/mypage';
+@import 'pages/category';

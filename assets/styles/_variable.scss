@@ -1,0 +1,107 @@
+/* 変数 */
+
+$themeColor:#ef4d63;
+$themeColor-lt:#fcf1ed;
+$pointColor:#ac8839;
+$linkColor:#019ab3;
+$bgColor:#f7f7f7;
+$fontColor: #000;
+
+$w:1000px; //コンテンツ幅
+
+/* mediaquery */
+
+$widthXL  : 1100px; //PC大（コンテンツ幅＋100px）
+$widthLG  : 980px; //PC小
+$widthTab : 768px; //タブレット
+
+@mixin lg {
+  //$widthXL（1100px）以上の場合
+  @media (min-width: $widthXL) {
+    @content;
+  }
+}
+@mixin md {
+  //$widthLG（980px）〜$widthXL-1（1099px）の場合
+  @media (min-width: $widthLG) and (max-width: ($widthXL - 1)) {
+    @content;
+  }
+}
+@mixin tab {
+  //$widthTab（768px）以上 $widthLG-1（979px）以下の場合
+  @media (min-width: $widthTab) and (max-width: ($widthLG - 1)) {
+    @content;
+  }
+}
+@mixin sp {
+  //$widthTab（768px）以下の場合
+  @media (max-width: ($widthTab - 1)) {
+    @content;
+  }
+}
+@mixin pc-tab {
+  // lg と md と tab
+  @media (min-width: ($widthTab)){
+    @content;
+  }
+}
+@mixin md-tab {
+  // md と tab
+  @media (min-width: $widthTab) and (max-width: ($widthXL - 1)) {
+    @content;
+  }
+}
+@mixin tab-sp {
+  @media (max-width: ($widthLG - 1)) {
+    @content;
+  }
+}
+
+@mixin ie11() {
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    @content;
+  }
+}
+
+
+/* font */
+
+$font-go-base: "Hiragino Kaku Gothic Pro" , "Yu Gothic Medium" , "Yu Gothic", Meiryo ,sans-serif;
+$font-mi-base: "Hiragino Mincho ProN", "Yu Mincho", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
+
+@mixin font-go(){
+  font-family: #{$font-go-base};
+}
+@mixin font-mi(){
+  font-family: #{$font-mi-base};
+}
+
+/* mixin */
+
+@mixin section-center(){
+  margin-left:auto;
+  margin-right:auto;
+  max-width: $w;
+  width:100%;
+
+  @include md-tab{
+    max-width:90%;
+    width:90%;
+  }
+}
+@mixin section-center-sp(){
+  @include sp{
+    margin-left:auto;
+    margin-right:auto;
+    max-width:90%;
+    width:90%;
+  }
+}
+
+@mixin clearfix(){
+  &::after{
+    content: "";
+    clear: both;
+    display: block;
+  }
+}
