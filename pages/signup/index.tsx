@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { useRouter } from "next/router";
 import Layout from "components/layout";
 import { auth } from "src/utils/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import firebaseError from "assets/js/errMsg";
 
 const SignUp: FC = () => {
@@ -16,7 +17,7 @@ const SignUp: FC = () => {
     e.preventDefault();
     try {
       // createUserWithEmailAndPasswordで、メルアドとパスワードをいれてユーザーを作る → リダイレクト
-      await auth.createUserWithEmailAndPassword(email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
       router.push("/");
     } catch (err) {
       alert(firebaseError(err, "signup"));

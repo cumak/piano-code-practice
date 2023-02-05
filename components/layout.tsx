@@ -30,38 +30,38 @@ export default function Layout({ children }) {
     <div className="container">
       <header className="header">
         <div className="logo">
-          <Link href="/">
-            <a className="logo-img">ろご</a>
+          <Link className="logo-img" href="/">
+            <img src="/img/logo.svg" alt="ロゴ" />
           </Link>
         </div>
         <div className="header-info">
           <div className="header-info-btns">
             <div className="header-info-btns-btn">
-              <Link href="/start/">
-                <a className="btn-s is-blue">Play</a>
+              <Link className="btn-s is-blue" href="/start/">
+                Play
               </Link>
             </div>
             <div className="header-info-btns-btn">
-              <Link href="/category/">
-                <a className="btn-s is-red">カテゴリー</a>
+              <Link className="btn-s is-red" href="/category/">
+                カテゴリー
               </Link>
             </div>
             <div className="header-info-btns-btn">
-              <Link href="/mypage/">
-                <a className="btn-s is-red">My 和音</a>
+              <Link className="btn-s is-red" href="/mypage/">
+                My 和音
               </Link>
             </div>
             <div className="header-info-btns-btn">
-              <Link href="/add/">
-                <a className="btn-s is-red">和音登録</a>
+              <Link className="btn-s is-red" href="/add/">
+                和音登録
               </Link>
             </div>
             <div className="header-info-btns-btn">
               <LoginBtn />
             </div>
             <div className="header-info-btns-btn">
-              <Link href="/signup/">
-                <a className="btn-s is-pink">新規登録</a>
+              <Link className="btn-s is-pink" href="/signup/">
+                新規登録
               </Link>
             </div>
           </div>

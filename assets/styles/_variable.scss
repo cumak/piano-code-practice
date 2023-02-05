@@ -75,6 +75,23 @@ $font-mi-base: "Hiragino Mincho ProN", "Yu Mincho", "HG明朝E", "ＭＳ Ｐ明�
 @mixin font-mi(){
   font-family: #{$font-mi-base};
 }
+@mixin font-roboto(){
+  font-family: 'Roboto Condensed',#{$font-go-base};
+}
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/Roboto_Condensed/RobotoCondensed-Regular.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 700;
+  src: url('/fonts/Roboto_Condensed/RobotoCondensed-Bold.woff') format('woff');
+  font-display: swap;
+}
 
 /* mixin */
 

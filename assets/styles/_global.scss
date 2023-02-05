@@ -1,31 +1,31 @@
-@use 'variable' as v;
+@use 'variable' as *;
 
 //ベースフォント=10px(計算を簡単にするため)
 html {
 	font-size: 62.5%;
 	scroll-behavior: smooth;
-	@include v.sp{
+	@include sp{
 		font-size: 65%;
 	}
 }
 
 body{
 	font-size:1.4rem;
-	color: v.$fontColor;
-	@include v.font-go;
+	color: $fontColor;
+	@include font-go;
 	-webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 	-webkit-text-size-adjust: 100%;
 }
 
 .pc{
-	@include v.sp{
+	@include sp{
 		display: none !important;
 	}
 }
 
 .sp{
-	@include v.pc-tab{
+	@include pc-tab{
 		display: none !important;
 	}
 }
@@ -42,7 +42,7 @@ img{
 }
 
 a{
-	color: v.$fontColor;
+	color: $fontColor;
 	text-decoration:none;
 	transition:all 0.3s;
 	img{
@@ -50,14 +50,14 @@ a{
 		transition:all 0.3s;
 	}
 
-	@include v.pc-tab{
+	@include pc-tab{
 		&:hover{
 				img{
 					opacity:0.8;
 				}
 		}
 	}
-	@include v.sp{
+	@include sp{
 		&:active{
 				img{
 					opacity:0.8;
@@ -72,14 +72,14 @@ p{
 		margin-top: 1.2rem;
 	}
 	a{
-		@include v.pc-tab{
+		@include pc-tab{
 			&:hover{
-				color: v.$linkColor;
+				color: $linkColor;
 			}
 		}
-		@include v.sp{
+		@include sp{
 			&:active{
-				color: v.$linkColor;
+				color: $linkColor;
 			}
 		}
 	}

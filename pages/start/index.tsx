@@ -8,12 +8,11 @@ import { onpuSlide } from "assets/js/OnpuSlide";
 import { createWaonArea } from "assets/js/CreateWaonArea";
 import { appendWaon } from "assets/js/AppendWaon";
 import msgBox from "assets/js/MsgBox";
-import { getWaonGroupFields, getWaonFields } from "assets/js/GetFromDB";
-import type { GetWaonGroupFields, GetWaonFields } from "assets/js/GetFromDB";
+import { getWaonGroupDataWithId } from "assets/js/GetFromDB";
+import type { GetWaonGroupDataWithId, WaonGroup } from "assets/js/GetFromDB";
 import CategoryOption from "components/categoryOption";
 
 import { auth } from "src/utils/firebase";
-import firebase from "firebase/app";
 import "firebase/firestore";
 
 const Start: FC = (props: any) => {
@@ -24,9 +23,10 @@ const Start: FC = (props: any) => {
   const codeRef = useRef<HTMLDivElement>(null);
 
   const [isShuffle, setIsShuffle] = useState(false);
-  const [waonsGroupMoto, setWaonsGroupMoto] = useState<GetWaonGroupFields>(); //ロードした和音グループ(カテゴリフィルター前を記憶)
-  const [waonsMoto, setwaonsMoto] = useState<GetWaonFields>(); //ロードした和音とコード(シャッフル前を記憶)
-  const [waons, setwaons] = useState<GetWaonFields>(); //ロードした和音とコード
+  const [waonsGroupMoto, setWaonsGroupMoto] =
+    useState<GetWaonGroupDataWithId>(); //ロードした和音グループ(カテゴリフィルター前を記憶)
+  const [waonsArrMoto, setWaonsArrMoto] = useState<GetWaonGroupDataWithId>(); //ロードした和音とコード(シャッフル前を記憶)
+  const [waonsArr, setWaonsArr] = useState<GetWaonGroupDataWithId>(); //ロードした和音とコード
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -42,17 +42,17 @@ const Start: FC = (props: any) => {
   }, [categorySelectRef]);
   useEffect(() => {
     if (isShuffle) {
-      const shufflewaon: any = shuffle(waons);
-      setwaons(shufflewaon);
+      const shufflewaon = shuffle(waonsArr);
+      setWaonsArr(shufflewaon);
     } else {
-      setwaons(waonsMoto);
+      setWaonsArr(waonsArrMoto);
     }
   }, [isShuffle]);
 
   async function init() {
-    const waonInfo: GetWaonFields = await loadWaon();
-    setwaons(waonInfo);
-    setwaonsMoto(waonInfo);
+    const waonInfo = await loadWaon();
+    setWaonsArr(waonInfo);
+    setWaonsArrMoto(waonInfo);
   }
 
   function shuffle([...array]) {
@@ -64,6 +64,10 @@ const Start: FC = (props: any) => {
   }
 
   function play() {
+    if (!waonsArr.length) {
+      alert("このカテゴリーの和音は登録されていません。");
+      return false;
+    }
     const qEl = document.getElementById("qTime") as HTMLInputElement;
     const aEl = document.getElementById("aTime") as HTMLInputElement;
     const qTime = qEl.value;
@@ -89,12 +93,13 @@ const Start: FC = (props: any) => {
 
     function start(qTime) {
       containerReset();
-      loadTheCode(waons[i]);
+      const waonGroup = waonsArr[i].waonGroupData as WaonGroup;
+      loadTheCode(waonGroup);
       qaTimer = setTimeout(function () {
-        loadTheWaon(waons[i]);
+        loadTheWaon(waonGroup);
         i++;
         // 最後のループ
-        if (i === waons.length) {
+        if (i === waonsArr.length) {
           clearInterval(timer);
           clearInterval(qaTimer);
           setTimeout(function () {
@@ -116,85 +121,72 @@ const Start: FC = (props: any) => {
     stopbtn.style.display = "none";
   }
 
-  function getCateFilteredWaon(userWaonGroupField: GetWaonGroupFields) {
+  async function loadWaon() {
+    const currentUser = auth.currentUser;
+    const waonGroupDataWithId = await getWaonGroupDataWithId(currentUser);
+    setWaonsGroupMoto(waonGroupDataWithId);
+    const filterdWaonGroupData = getCateFilteredWaon(waonGroupDataWithId);
+    return filterdWaonGroupData;
+  }
+
+  async function categoryChange() {
+    let filterdWaonGroupData = getCateFilteredWaon(waonsGroupMoto);
+    filterdWaonGroupData = isShuffle
+      ? shuffle(filterdWaonGroupData)
+      : filterdWaonGroupData;
+    setWaonsArr(filterdWaonGroupData);
+  }
+
+  function getCateFilteredWaon(waonGroupDataWithId: GetWaonGroupDataWithId) {
     const cateId = categorySelectRef.current.value;
 
     if (cateId === "default") {
-      return userWaonGroupField;
+      return waonGroupDataWithId;
     }
-    const filterdWg = userWaonGroupField.filter((wg) => {
-      return wg.field.category === cateId;
+    const filterdWg = waonGroupDataWithId.filter((wg) => {
+      return wg.waonGroupData.category === cateId;
     });
     return filterdWg;
   }
 
-  async function getWaonsFromWg(
-    currentUser: firebase.User,
-    waonGroup: GetWaonGroupFields
-  ) {
-    return Promise.all(
-      waonGroup.map(async function (e) {
-        // 各和音グループのコードと和音を取得
-        const waonGroupDoc = e.main;
-
-        return await getWaonFields(currentUser, waonGroupDoc);
-      })
-    ).then((waonInfo: GetWaonFields) => {
-      return waonInfo;
-    });
-  }
-
-  async function loadWaon() {
-    const currentUser = firebase.auth().currentUser;
-    const userWaonGroupField = await getWaonGroupFields(currentUser);
-    setWaonsGroupMoto(userWaonGroupField);
-
-    const waonGroup = getCateFilteredWaon(userWaonGroupField);
-    const waonInfo = await getWaonsFromWg(currentUser, waonGroup);
-    return waonInfo;
-  }
-
-  async function categoryChange() {
-    const currentUser = firebase.auth().currentUser;
-    const waonGroup = getCateFilteredWaon(waonsGroupMoto);
-    let waonInfo = await getWaonsFromWg(currentUser, waonGroup);
-    if (isShuffle) {
-      waonInfo = shuffle(waonInfo);
-    }
-    setwaons(waonInfo);
-  }
-
   function containerReset() {
-    const onpuContainer = document.querySelector(".onpuContainer");
-    const codeWrap = document.querySelector(".code");
-    while (onpuContainer.firstChild) {
-      onpuContainer.removeChild(onpuContainer.firstChild);
+    const onpuContainer = document.querySelector(
+      ".onpuContainer"
+    ) as HTMLElement;
+    const codeWrap = document.querySelector(".code") as HTMLElement;
+    if (onpuContainer?.hasChildNodes()) {
+      while (onpuContainer.firstChild) {
+        onpuContainer.removeChild(onpuContainer.firstChild);
+      }
     }
-    while (codeWrap.firstChild) {
-      codeWrap.removeChild(codeWrap.firstChild);
+    if (codeWrap?.hasChildNodes()) {
+      while (codeWrap.firstChild) {
+        codeWrap.removeChild(codeWrap.firstChild);
+      }
     }
   }
 
   // スタート後に和音を描画
-  function loadTheWaon(waonsG) {
+  function loadTheWaon(waonGroup: WaonGroup) {
     const onpuContainer = document.querySelector(".onpuContainer");
     // 音符Itemごとの処理 waonsG->[{code:,waons:},{code:,waons:}]
-    for (let j = 0; j < waonsG.length; j++) {
+    for (let j = 0; j < waonGroup.waons.length; j++) {
       createWaonArea({ onpuContainer: onpuContainer });
       const items = onpuContainer.querySelectorAll(".onpuContainer-item");
       const item = items[j];
-      appendWaon(item, waonsG[j]);
+      const notes = waonGroup.waons[j].notes;
+      appendWaon(item, notes);
     }
     onpuSlide();
   }
 
   // スタート後にコードを描画
-  function loadTheCode(waonsG) {
+  function loadTheCode(waonGroup: WaonGroup) {
     const codeWrap = document.querySelector(".code");
-    for (let j = 0; j < waonsG.length; j++) {
+    for (let j = 0; j < waonGroup.waons.length; j++) {
       const codeDiv = document.createElement("div");
       codeDiv.classList.add("code-one");
-      codeDiv.innerHTML = waonsG[j].code;
+      codeDiv.innerHTML = waonGroup.waons[j].code;
       codeWrap.append(codeDiv);
     }
   }

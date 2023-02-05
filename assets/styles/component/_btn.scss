@@ -1,4 +1,4 @@
-@use '../variable' as v;
+@use '../variable' as *;
 
 .btn-big{
   display: inline-flex;
@@ -14,7 +14,7 @@
   font-weight: bold;
   cursor: pointer;
   text-align: center;
-  @include v.sp{
+  @include sp{
     font-size: 2rem;
   }
   &.is-green{
@@ -44,14 +44,14 @@
     color: #fff;
   }
   &.is-red{
-    background: v.$themeColor;
+    background: $themeColor;
     color: #fff;
   }
   &.is-blue{
     background: #32a8e4;
     color: #fff;
   }
-  @include v.pc-tab{
+  @include pc-tab{
     &:hover{
       background: #d17000;
     }
@@ -70,7 +70,7 @@
   font-size:  1.8rem;
   letter-spacing: .1rem;
   cursor: pointer;
-  @include v.tab-sp{
+  @include tab-sp{
     font-size: 1.6rem;
   }
   &:not(:nth-child(3n + 1)){

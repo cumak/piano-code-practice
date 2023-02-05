@@ -1,4 +1,4 @@
-@use '../variable' as v;
+@use '../variable' as *;
 
 .title-l{
   font-size: 3.5rem;
@@ -9,7 +9,7 @@
 
 .title-m{
   margin-bottom: 40px;
-  border-bottom: 2px solid v.$themeColor;
+  border-bottom: 2px solid $themeColor;
   padding-bottom: 5px;
   font-size: 2rem;
   font-weight: bold;

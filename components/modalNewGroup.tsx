@@ -1,12 +1,12 @@
 import { useEffect, FC } from "react";
-
-import firebase from "firebase/app";
-import "firebase/firestore";
-const db = firebase.firestore();
+import MicroModal from "micromodal";
+import { auth } from "src/utils/firebase";
+import { getFirestore, addDoc, collection } from "firebase/firestore";
+import type { Firestore } from "firebase/firestore";
+const db: Firestore = getFirestore();
 
 const modalNewGroup: FC = (props: any) => {
   useEffect(() => {
-    require("micromodal");
     MicroModal.init({
       disableScroll: true,
       awaitCloseAnimation: true,
@@ -18,19 +18,18 @@ const modalNewGroup: FC = (props: any) => {
     const input = document.getElementById("newGroupName") as HTMLInputElement;
     const newGroupName = input.value;
 
-    const user = firebase.auth().currentUser;
-    db.collection("user")
-      .doc(user.email)
-      .collection("category")
-      .add({ name: newGroupName })
-      .then(() => {
-        alert("カテゴリーを追加しました");
-      });
+    const user = auth.currentUser;
+    addDoc(collection(db, "user", user.email, "category"), {
+      name: newGroupName,
+    }).then(() => {
+      alert("カテゴリーを追加しました");
+      MicroModal.close("modal-1");
+    });
   }
 
   return (
     <div id="modal-1" aria-hidden="true" className="modal micromodal-slide">
-      <div tabIndex={-1} data-micromodal-close className="modal__overlay">
+      <div tabIndex={-1} className="modal__overlay">
         <div
           role="dialog"
           aria-modal="true"
@@ -52,7 +51,7 @@ const modalNewGroup: FC = (props: any) => {
             <button
               className="btn-grad is-blue"
               aria-label="登録する"
-              data-micromodal-close
+              type="button"
               onClick={addCategory}
             >
               新規作成

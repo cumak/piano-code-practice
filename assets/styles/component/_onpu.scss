@@ -1,4 +1,4 @@
-@use '../variable' as v;
+@use '../variable' as *;
 .addMain{
 	&-inner{
 		position: relative;
@@ -191,7 +191,7 @@
 		width: 66%;
 		height: 3px;
 		background: #000;
-		@include v.sp{
+		@include sp{
 			height: 2px;
 		}
 		.addMain & {

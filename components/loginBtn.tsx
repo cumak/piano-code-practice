@@ -6,35 +6,25 @@ import { auth } from "src/utils/firebase";
 
 const loginBtn: FC = (props: any) => {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState<null | boolean>(null);
-  useEffect(() => {
-    let isMounted = true;
-    auth.onAuthStateChanged((user) => {
-      if (isMounted) {
-        user ? setIsLogin(true) : setIsLogin(false);
-      }
-    });
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+
   const logOut = async () => {
     try {
       await auth.signOut();
       router.push("/login");
     } catch (error) {
-      alert(error.message);
+      console.error(error.message);
     }
   };
+
   return (
     <>
-      {isLogin ? (
+      {auth.currentUser ? (
         <span className="btn-s is-orange" onClick={logOut}>
           ログアウト
         </span>
       ) : (
-        <Link href="/login/">
-          <a className="btn-s is-orange">ログイン</a>
+        <Link className="btn-s is-orange" href="/login/">
+          ログイン
         </Link>
       )}
     </>

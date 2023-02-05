@@ -8,9 +8,9 @@ import { onpuSlide } from "../../assets/js/OnpuSlide";
 import { createWaonArea } from "../../assets/js/CreateWaonArea";
 import { appendWaon } from "../../assets/js/AppendWaon";
 import msgBox from "../../assets/js/MsgBox";
-import { getWaonGroupFields, getWaonFields } from "../../assets/js/GetFromDB";
+import { getWaonGroupData, getWaonFields } from "../../assets/js/GetFromDB";
 import type {
-  GetWaonGroupFields,
+  getWaonGroupData,
   GetWaonFields,
 } from "../../assets/js/GetFromDB";
 import CategoryOption from "../../components/categoryOption";
@@ -26,7 +26,7 @@ const Start: FC = (props: any) => {
   const categorySelectRef = useRef<HTMLSelectElement>(null);
 
   const [shuffleBtnCheck, setShuffleBtnCheck] = useState(false);
-  const [waonsGroupMoto, setWaonsGroupMoto] = useState<GetWaonGroupFields>(); //ロードした和音グループ(カテゴリフィルター前を記憶)
+  const [waonsGroupMoto, setWaonsGroupMoto] = useState<getWaonGroupData>(); //ロードした和音グループ(カテゴリフィルター前を記憶)
   const [waonsMoto, setwaonsMoto] = useState<GetWaonFields>(); //ロードした和音とコード(シャッフル前を記憶)
   const [waons, setwaons] = useState<GetWaonFields>(); //ロードした和音とコード
 
@@ -115,7 +115,7 @@ const Start: FC = (props: any) => {
     stopbtn.style.display = "none";
   }
 
-  function getCateFilteredWaon(userWaonGroupField: GetWaonGroupFields) {
+  function getCateFilteredWaon(userWaonGroupField: getWaonGroupData) {
     // カテゴリーvalue取得し、カテゴリーでフィルター
     // const cateEl = document.getElementById(
     //   "categorySelect"
@@ -133,7 +133,7 @@ const Start: FC = (props: any) => {
 
   async function getWaonsFromWg(
     currentUser: firebase.User,
-    waonGroup: GetWaonGroupFields
+    waonGroup: getWaonGroupData
   ) {
     return Promise.all(
       waonGroup.map(async function (e) {
@@ -149,7 +149,7 @@ const Start: FC = (props: any) => {
 
   async function loadWaon() {
     const currentUser = firebase.auth().currentUser;
-    const userWaonGroupField = await getWaonGroupFields(currentUser);
+    const userWaonGroupField = await getWaonGroupData(currentUser);
     setWaonsGroupMoto(userWaonGroupField);
 
     const waonGroup = getCateFilteredWaon(userWaonGroupField);

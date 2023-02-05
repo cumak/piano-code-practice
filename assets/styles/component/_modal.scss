@@ -1,4 +1,4 @@
-@use '../variable' as v;
+@use '../variable' as *;
 
 .modal{
   position: relative;
@@ -27,7 +27,7 @@
   border-radius: 4px;
   overflow-y: auto;
   box-sizing: border-box;
-  @include v.sp{
+  @include sp{
     max-width: 90%;
     max-height: 80vh;
   }

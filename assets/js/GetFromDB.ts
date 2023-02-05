@@ -1,65 +1,71 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
-const db = firebase.firestore();
+import {
+  getFirestore,
+  getDocs,
+  collection,
+  orderBy,
+  query,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import type { Firestore, DocumentData } from "firebase/firestore";
+const db: Firestore = getFirestore();
 
-export type GetWaonGroupFields = {
-  field?: { category: string } | firebase.firestore.DocumentData;
-  main?: firebase.firestore.DocumentData;
+export type GetWaonGroupDataWithId = {
+  waonGroupData?: DocumentData;
   waonGid?: string;
 }[];
 
-export const getWaonGroupFields = (currentUser) => {
-  let userWaonGroupField: GetWaonGroupFields = [];
-  return db
-    .collection("user")
-    .doc(currentUser.email)
-    .collection("waonGroup")
-    .orderBy("createdAt")
-    .get()
-    .then((querySnapshot) => {
-      // ドキュメント取得時に、ドキュメントIDも追加しておく
-      for (let i = 0; i < querySnapshot.docs.length; i++) {
-        userWaonGroupField[i] = {
-          main: querySnapshot.docs[i],
-          waonGid: querySnapshot.docs[i].id, //IDも配列に加える
-          field: querySnapshot.docs[i].data(),
-        };
-      }
-      return userWaonGroupField;
-    });
+export type WaonGroup = {
+  category: string;
+  createdAt: any;
+  modifiedAt: any;
+  waons: Waons;
 };
 
-export type GetWaonFields =
+// categoryなどを含まない和音だけの配列
+export type Waons = theWaon[];
+
+export type theWaon =
   | {
       code: string;
       index: number;
-      waons: {
+      notes: {
         num: number;
         flat: boolean;
         sharp: boolean;
       }[];
-    }[]
-  | firebase.firestore.DocumentData[];
+    }
+  | DocumentData;
 
-export function getWaonFields(currentUser, waonGroupDoc) {
-  let waonFields: GetWaonFields;
-  // waonGroupDocが、ドキュメントそのものならそのidを取得
-  let docId = waonGroupDoc;
-  if ("id" in waonGroupDoc) {
-    docId = waonGroupDoc.id;
+export const getWaonGroupDataWithId = async (currentUser) => {
+  let userWaonGroupField: GetWaonGroupDataWithId = [];
+  const wgRef = collection(db, "user", currentUser.email, "waonGroup");
+  const sortedWgRef = query(wgRef, orderBy("createdAt", "asc"));
+  const wg = await getDocs(sortedWgRef);
+  for (let i = 0; i < wg.docs.length; i++) {
+    userWaonGroupField[i] = {
+      waonGid: wg.docs[i].id, //IDも配列に加える
+      waonGroupData: wg.docs[i].data(),
+    };
   }
-  return db
-    .collection("user")
-    .doc(currentUser.email)
-    .collection("waonGroup")
-    .doc(docId)
-    .collection("waon")
-    .orderBy("index")
-    .get()
-    .then((querySnapshot) => {
-      waonFields = querySnapshot.docs.map((e) => {
-        return e.data();
-      });
-      return waonFields;
-    });
-}
+  return userWaonGroupField;
+};
+
+// export async function getWaonFields(waonGroupIdDocRef) {
+//   return await getDoc(waonGroupIdDocRef).then((querySnapshot) => {
+//   });
+//   // return db
+//   //   .collection("user")
+//   //   .doc(currentUser.email)
+//   //   .collection("waonGroup")
+//   //   .doc(docId)
+//   //   .collection("waon")
+//   //   .orderBy("index")
+//   //   .get()
+//   //   .then((querySnapshot) => {
+//   //     waonFields = querySnapshot.docs.map((e) => {
+//   //       return e.data();
+//   //     });
+//   //     return waonFields;
+//   //   });
+// }

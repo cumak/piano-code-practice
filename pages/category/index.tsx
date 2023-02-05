@@ -1,56 +1,73 @@
 import { useEffect, FC, useState } from "react";
 import Head from "components/head";
 import Layout from "components/layout";
+import { auth } from "src/utils/firebase";
+import { useForm, useFieldArray } from "react-hook-form";
 
-import firebase from "firebase/app";
-import "firebase/firestore";
-const db = firebase.firestore();
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
+import type { Firestore } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+const db: Firestore = getFirestore();
+
+type formProps = {
+  category: {
+    cateName: string;
+    docId: string;
+  }[];
+};
 
 const Category: FC = (props: any) => {
   let [cateName, setCateName] = useState([]);
-  let [docId, setDocId] = useState([]);
-  let index = -1;
+  let [docIds, setDocIds] = useState([]);
+  let [targetId, setTargetId] = useState<string>("");
+  const { handleSubmit, setValue, register, control } = useForm<formProps>();
+
+  const { fields, append, remove } = useFieldArray({
+    name: "category",
+    control,
+  });
 
   useEffect(() => {
     let currentUser;
     // ユーザーをここでチェックしないと、doc(currentUser.email)がnullになる
-    firebase.auth().onAuthStateChanged((user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        currentUser = firebase.auth().currentUser;
+        currentUser = auth.currentUser;
         getCate();
       }
     });
     async function getCate() {
-      const querySnapshot = await db
-        .collection("user")
-        .doc(currentUser.email)
-        .collection("category")
-        .get();
-      querySnapshot.forEach((doc) => {
+      const categoryDocs = await getDocs(
+        collection(db, "user", currentUser.email, "category")
+      );
+      const forSetValue = [];
+      categoryDocs.forEach((doc) => {
         const data = doc.data();
         cateName = [...cateName, data.name];
-        docId = [...docId, doc.id];
+        docIds = [...docIds, doc.id];
+        forSetValue.push({ cateName: data.name, docId: doc.id });
       });
       setCateName(cateName);
-      setDocId(docId);
+      setDocIds(docIds);
+      setValue("category", forSetValue);
     }
   }, []);
 
-  async function changeCate(e) {
-    const user = firebase.auth().currentUser;
-    const targetId = e.target.dataset.id;
-    const textInput = document.querySelector(
-      "#" + targetId + " .categorySection-name"
+  async function onSubmit(data) {
+    const cateObj = data.category.find((cate) => cate.docId === targetId);
+    await updateDoc(
+      doc(db, "user", auth.currentUser.email, "category", targetId),
+      {
+        name: cateObj.cateName,
+      }
     );
-    const newVal = textInput.value;
-    const targetDoc = db
-      .collection("user")
-      .doc(user.email)
-      .collection("category")
-      .doc(targetId);
-    await targetDoc.update({
-      name: newVal,
-    });
     alert("カテゴリ名を更新しました。");
   }
 
@@ -60,27 +77,29 @@ const Category: FC = (props: any) => {
       <main className="main">
         <div className="mainWrapper">
           <h1 className="title-m">カテゴリー</h1>
-          <div className="categoryArea">
-            {cateName.map((name) => {
-              index++;
+          <form className="categoryArea" onSubmit={handleSubmit(onSubmit)}>
+            {fields.map((fields, index) => {
               return (
-                <div id={docId[index]} className="categorySection" key={name}>
+                <div className="categorySection" key={fields.id}>
+                  <input type="hidden" name="docId" />
                   <input
                     className="categorySection-name"
                     type="text"
-                    defaultValue={name}
+                    name={`category.${index}.cateName`}
+                    {...register(`category.${index}.cateName` as const, {
+                      required: true,
+                    })}
                   />
                   <input
                     className="categorySection-submit btn-s is-orange"
                     type="submit"
-                    data-id={docId[index]}
                     value="カテゴリ名更新"
-                    onClick={changeCate}
+                    onClick={() => setTargetId(fields.docId)}
                   />
                 </div>
               );
             })}
-          </div>
+          </form>
         </div>
       </main>
     </Layout>

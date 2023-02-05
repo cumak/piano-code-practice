@@ -1,8 +1,9 @@
 import { useEffect, FC, useState } from "react";
 import "src/utils/firebase";
-import firebase from "firebase/app";
-import "firebase/firestore";
-const db = firebase.firestore();
+import { auth } from "src/utils/firebase";
+import { getFirestore, getDocs, collection } from "firebase/firestore";
+import type { Firestore } from "firebase/firestore";
+const db: Firestore = getFirestore();
 
 type Props = {
   disabled?: boolean;
@@ -12,19 +13,20 @@ type Props = {
 };
 
 export async function getAllCate() {
-  const currentUser = firebase.auth().currentUser;
-  const querySnapshot = await db
-    .collection("user")
-    .doc(currentUser.email)
-    .collection("category")
-    .orderBy("name")
-    .get();
-  const dispData = querySnapshot.docs.map((doc) => {
+  const currentUser = auth.currentUser;
+  const categoryDocs = await getDocs(
+    collection(db, "user", currentUser.email, "category")
+  );
+  const dispData = categoryDocs.docs.map((doc) => {
     const data = doc.data();
     return {
       cateName: data.name,
       docId: doc.id,
     };
+  });
+  dispData.push({
+    cateName: "未設定",
+    docId: "default",
   });
   return dispData;
 }

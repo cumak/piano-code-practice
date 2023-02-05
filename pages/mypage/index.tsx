@@ -1,71 +1,46 @@
-import React, { useEffect, FC } from "react";
+import React, { useEffect, useState, FC } from "react";
 import { useRouter } from "next/router";
 import Layout from "components/layout";
 import { auth } from "src/utils/firebase";
 import { createWaonArea } from "assets/js/CreateWaonArea";
 import { appendWaon } from "assets/js/AppendWaon";
 import { onpuSlide } from "assets/js/OnpuSlide";
-import { getWaonGroupFields, getWaonFields } from "assets/js/GetFromDB";
+import { getWaonGroupDataWithId } from "assets/js/GetFromDB";
+import type { GetWaonGroupDataWithId } from "assets/js/GetFromDB";
 import { getAllCate } from "components/categoryOption";
 
-import firebase from "firebase/app";
-import "firebase/firestore";
-const db = firebase.firestore();
+import { getFirestore, doc, deleteDoc } from "firebase/firestore";
+import type { Firestore } from "firebase/firestore";
+const db: Firestore = getFirestore();
 
 const Mypage: FC = () => {
   const router = useRouter();
+  const [waonGroupDataWithId, setWaonGroupDataWithId] =
+    useState<GetWaonGroupDataWithId>([]);
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(async (user) => {
       if (!user) {
         router.push("/login/");
       } else {
-        myWaonLoad();
+        const currentUser = auth.currentUser;
+        const data = await getWaonGroupDataWithId(currentUser);
+        setWaonGroupDataWithId(data);
       }
     });
   }, []);
 
-  async function getUserhasWaonInfo() {
-    // 全てのデータを格納するもの
-    let waonInformations = [];
-
-    const currentUser = firebase.auth().currentUser;
-
-    // waonGroupFields =>
-    // [0 => {
-    //     main: {createdAt: timeStamp, {waonサブコレ}},
-    //     waonGid: String
-    //   ]
-    // ]
-    const waonGroupFields = await getWaonGroupFields(currentUser);
-
-    // 和音グループごとに処理
-    for (let i = 0; i < waonGroupFields.length; i++) {
-      waonInformations[i] = {};
-      waonInformations[i].createdAt = waonGroupFields[i].main.createdAt;
-      waonInformations[i].waonGid = waonGroupFields[i].waonGid;
-      waonInformations[i].field = waonGroupFields[i].field;
-
-      const waonGroupDoc = waonGroupFields[i].main;
-      // 和音を取得
-      waonInformations[i].waons = await getWaonFields(
-        currentUser,
-        waonGroupDoc
-      );
-    }
-
-    return waonInformations;
-  }
+  useEffect(() => {
+    myWaonLoad();
+  }, [waonGroupDataWithId]);
 
   async function myWaonLoad() {
-    const waonInformations: any = await getUserhasWaonInfo();
-
-    // データを元に表示
-    for (let i = 0; i < waonInformations.length; i++) {
+    for (let i = 0; i < waonGroupDataWithId.length; i++) {
       // 和音グループの数だけ5線を出力
-      let waonInfo = waonInformations[i].waons;
-      let waonGid = waonInformations[i].waonGid;
-      const categoryId = waonInformations[i].field.category;
+      let waonGroupData = waonGroupDataWithId[i].waonGroupData;
+      let waonGid = waonGroupDataWithId[i].waonGid;
+      const categoryId = waonGroupDataWithId[i].waonGroupData.category;
+
       const allCate = await getAllCate();
       const cateObj = allCate.find((cate) => {
         return cate.docId === categoryId;
@@ -101,14 +76,14 @@ const Mypage: FC = () => {
       // 和音itemを作る (htmlを丸ごと挿入しただけなので、containerやitemはiとかjを使って個別に取得)
       const onpuContainers = document.querySelectorAll(".onpuContainer");
       const onpuContainer = onpuContainers[i];
-      // 音符Itemごとの処理 waonInfo->[{code:,waons:},{code:,waons:}]
-      for (let j = 0; j < waonInfo.length; j++) {
+
+      for (let j = 0; j < waonGroupData.waons.length; j++) {
         createWaonArea({ onpuContainer, addPlay: true });
         const items = onpuContainer.querySelectorAll(".onpuContainer-item");
         const item = items[j];
-        appendWaon(item, waonInfo[j]);
+        appendWaon(item, waonGroupData.waons[j].notes);
         // コードネームを挿入
-        const code = waonInfo[j].code;
+        const code = waonGroupData.waons[j].code;
         const codeinput: HTMLInputElement = item.querySelector(
           ".onpuContainer-item-opt-code input"
         );
@@ -137,35 +112,34 @@ const Mypage: FC = () => {
   }
 
   async function deleteGroup(e) {
-    const currentUser = firebase.auth().currentUser;
+    const currentUser = auth.currentUser;
     const target = e.target;
     const myWaon = target.closest(".myWaon-gosen");
     const waonGroupId = myWaon.dataset.id;
 
-    const waonGroupDoc = db
-      .collection("user")
-      .doc(currentUser.email)
-      .collection("waonGroup")
-      .doc(waonGroupId);
-    let arr = [];
-    waonGroupDoc
-      .collection("waon")
-      .get()
-      // 対象の和音グループを消す
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          arr.push(waonGroupDoc.collection("waon").doc(doc.id).delete());
-        });
-        Promise.all(arr)
-          // 和音サブコレクションを全部削除したあと
-          .then(() => {
-            // ドキュメントを削除
-            waonGroupDoc.delete().then(() => {
-              alert("削除しました");
-              myWaon.remove();
-            });
-          });
+    deleteDoc(doc(db, "user", currentUser.email, "waonGroup", waonGroupId))
+      .then(() => {
+        alert("削除しました");
+        refresh();
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("削除に失敗しました");
       });
+  }
+
+  async function refresh() {
+    const currentUser = auth.currentUser;
+    reset();
+    const newWaonGroupDataWithId = await getWaonGroupDataWithId(currentUser);
+    setWaonGroupDataWithId([...newWaonGroupDataWithId]);
+  }
+
+  function reset() {
+    const myWaonEl = document.querySelector(".myWaon");
+    while (myWaonEl.firstChild) {
+      myWaonEl.removeChild(myWaonEl.firstChild);
+    }
   }
 
   // 編集ボタン

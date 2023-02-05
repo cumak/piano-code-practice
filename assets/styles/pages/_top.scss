@@ -1,4 +1,4 @@
-@use 'assets/styles/variable' as v;
+@use 'assets/styles/variable' as *;
 
 .topContainer{
   display: flex;
@@ -11,10 +11,16 @@
   }
 }
 
-.mainCopy{
-  margin-bottom: 40px;
-  font-size: 5rem;
-  text-align: center;
+.topCopy{
+  margin-bottom: 30px;
+  &-main{
+    margin-bottom: 40px;
+    font-size: 5rem;
+    text-align: center;
+  }
+  &-sub{
+    text-align: center;
+  }
 }
 
 .openBtn{

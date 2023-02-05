@@ -3,23 +3,24 @@ import { useRouter } from "next/router";
 import Layout from "components/layout";
 import { auth } from "src/utils/firebase";
 import firebaseError from "assets/js/errMsg";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const Login: FC = () => {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isLogin, setIsLogin] = useState<boolean>(false);
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       user && router.push("/");
     });
-  }, []);
+  }, [isLogin]);
 
-  const logIn = async (e) => {
-    e.preventDefault();
+  const logIn = async () => {
     try {
-      await auth.signInWithEmailAndPassword(email, password);
-      router.push("/");
+      await signInWithEmailAndPassword(auth, email, password);
+      setIsLogin(true);
     } catch (err) {
       alert(firebaseError(err, "signin"));
     }
@@ -30,12 +31,13 @@ const Login: FC = () => {
       <main className="main">
         <div className="wrapper">
           <div className="formWrapper">
-            <form action="" className="loginForm" onSubmit={logIn}>
+            <form action="" className="loginForm">
               <label className="formItem">
                 <span className="formItem-label">メールアドレス</span>
                 <span className="formItem-input">
                   <input
                     type="email"
+                    name="email"
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </span>
@@ -50,7 +52,11 @@ const Login: FC = () => {
                 </span>
               </label>
               <div className="formBtn">
-                <button className="btn-s is-orange" type="submit">
+                <button
+                  className="btn-s is-orange"
+                  type="button"
+                  onClick={logIn}
+                >
                   ログイン
                 </button>
               </div>

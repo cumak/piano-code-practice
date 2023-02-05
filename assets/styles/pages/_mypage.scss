@@ -1,4 +1,5 @@
-@use 'assets/styles/variable' as v;
+@use 'assets/styles/variable' as *;
+
 .myWaon{
   display: flex;
   flex-wrap:wrap;

@@ -1,4 +1,4 @@
-@use '../variable' as v;
+@use '../variable' as *;
 
 .selectGosenContainer{
   position: relative;
@@ -177,7 +177,7 @@
 }
 
 .registerBtn{
-	@include v.section-center;
+	@include section-center;
 	margin-top: 60px;
 	padding-right: 5%;
 	text-align: right;
@@ -187,7 +187,7 @@
 	text-align: center;
 	&-title{
 		margin: 0 0 20px;
-		color: v.$themeColor;
+		color: $themeColor;
 		font-size: 1.8rem;
 	}
 	&-inputArea{

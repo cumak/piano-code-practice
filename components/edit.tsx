@@ -1,16 +1,27 @@
 import { onpuSlide } from "assets/js/OnpuSlide";
-import { deleteCollection } from "assets/js/DeleteDB";
 import { createWaonArea } from "assets/js/CreateWaonArea";
 import ModalNewGroup from "components/modalNewGroup";
 import CategoryOption from "components/categoryOption";
+import { auth } from "src/utils/firebase";
 
 import { useEffect, FC, useRef } from "react";
 import { useRouter } from "next/router";
 
-import "src/utils/firebase";
-import firebase from "firebase/app";
-import "firebase/firestore";
-const db = firebase.firestore();
+import {
+  getFirestore,
+  getDocs,
+  setDoc,
+  addDoc,
+  updateDoc,
+  serverTimestamp,
+  collection,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
+import type { Firestore, QueryDocumentSnapshot } from "firebase/firestore";
+
+// Firestore のインスタンスを初期化
+const db: Firestore = getFirestore();
 
 const edit: FC = (props: any) => {
   const router = useRouter();
@@ -227,36 +238,19 @@ const edit: FC = (props: any) => {
   async function addWaonToDb() {
     const items = document.querySelectorAll(".addMain .onpuContainer-item");
 
-    let waonAdded = []; //DB追加処理のPromiseAll用の配列
-    const user = firebase.auth().currentUser;
+    const user = auth.currentUser;
     const cateId = categorySelectRef.current.value;
 
-    // waonGroupのリファレンスを新規作成
-    let waonGroupRef;
-    if (editMode) {
-      waonGroupRef = db
-        .collection("user")
-        .doc(user.email)
-        .collection("waonGroup")
-        .doc(routeId as string);
-    } else {
-      waonGroupRef = db
-        .collection("user")
-        .doc(user.email)
-        .collection("waonGroup")
-        .doc();
-    }
+    // TODO:いるかもしれない　編集モードの時は、waonコレクションの和音をDeleteしておく
+    // if (editMode) {
+    //   const waonCollection = waonGroupRef.collection("waon");
+    //   const deletePs = await deleteCollection(waonCollection, 4);
+    //   waonAdded.push(deletePs);
+    // }
 
-    // 編集モードの時は、waonコレクションの和音をDeleteしておく
-    if (editMode) {
-      const waonCollection = waonGroupRef.collection("waon");
-      const deletePs = await deleteCollection(waonCollection, 4);
-      waonAdded.push(deletePs);
-    }
-
-    let i = 0;
-    items.forEach((item) => {
-      let waonArr = [];
+    let waonObj = [];
+    items.forEach((item, index) => {
+      let notes = [];
       const one = item.querySelectorAll(".onpuTama-one");
       const code: HTMLInputElement = item.querySelector(
         ".onpuContainer-item-opt-code input"
@@ -265,44 +259,46 @@ const edit: FC = (props: any) => {
         const dataNumber = parseInt(tama.dataset.num);
         let sharp = tama.classList.contains("is-sharp") ? true : false;
         let flat = tama.classList.contains("is-flat") ? true : false;
-        waonArr.push({
+        notes.push({
           num: dataNumber,
           sharp: sharp,
           flat: flat,
         });
       });
-      const waonObj = {
-        index: i,
+      waonObj.push({
+        index: index,
         code: code.value,
-        waons: waonArr,
-      };
-      waonAdded.push(waonGroupRef.collection("waon").doc().set(waonObj));
-      // タイムスタンプとカテゴリー追加
-      if (editMode) {
-        waonAdded.push(
-          waonGroupRef.update({
-            modifiedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            category: cateId,
-          })
-        );
-      } else {
-        waonAdded.push(
-          waonGroupRef.set({
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            modifiedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            category: cateId,
-          })
-        );
-      }
-      i++;
+        notes,
+      });
     });
-    Promise.all(waonAdded).then(() => {
-      alert("和音を追加しました。");
-      // 新規追加モードなら登録後クリアする
-      if (!editMode) {
-        initContainer();
-      }
-    });
+    let newWaonGroup = {
+      waons: [...waonObj],
+      modifiedAt: serverTimestamp(),
+      category: cateId,
+    };
+    if (!editMode) {
+      newWaonGroup["createdAt"] = serverTimestamp();
+    }
+    const wgCollection = collection(db, "user", user.email, "waonGroup");
+    if (editMode) {
+      await updateDoc(doc(wgCollection, routeId as string), {
+        waons: waonObj,
+        modifiedAt: serverTimestamp(),
+        category: cateId,
+      });
+    } else {
+      await addDoc(wgCollection, {
+        waons: waonObj,
+        modifiedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        category: cateId,
+      });
+    }
+    alert("和音を追加しました。");
+    // 新規追加モードなら登録後クリアする
+    if (!editMode) {
+      initContainer();
+    }
   }
 
   function initContainer() {
@@ -595,7 +591,7 @@ const edit: FC = (props: any) => {
                 </div>
                 <div className="actionBtns-row is-group">
                   <section className="actionBtns-row-group">
-                    <h2 className="actionBtns-row-group-title">グループ</h2>
+                    <h2 className="actionBtns-row-group-title">カテゴリー</h2>
                     <CategoryOption selectRef={categorySelectRef} />
                     <div className="actionBtns-row-group-newBtn">
                       <span
