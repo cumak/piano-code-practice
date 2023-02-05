@@ -50,22 +50,3 @@ export const getWaonGroupDataWithId = async (currentUser) => {
   }
   return userWaonGroupField;
 };
-
-// export async function getWaonFields(waonGroupIdDocRef) {
-//   return await getDoc(waonGroupIdDocRef).then((querySnapshot) => {
-//   });
-//   // return db
-//   //   .collection("user")
-//   //   .doc(currentUser.email)
-//   //   .collection("waonGroup")
-//   //   .doc(docId)
-//   //   .collection("waon")
-//   //   .orderBy("index")
-//   //   .get()
-//   //   .then((querySnapshot) => {
-//   //     waonFields = querySnapshot.docs.map((e) => {
-//   //       return e.data();
-//   //     });
-//   //     return waonFields;
-//   //   });
-// }
