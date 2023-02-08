@@ -2,13 +2,7 @@ import { Layout } from "components/layout";
 import { ModalNewGroup } from "components/modalNewGroup";
 import { onAuthStateChanged } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
-import {
-  collection,
-  doc,
-  getDocs,
-  getFirestore,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, doc, getDocs, getFirestore, updateDoc } from "firebase/firestore";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -27,7 +21,7 @@ const Category: FC = (props: any) => {
   const [targetId, setTargetId] = useState<string>("");
   const { handleSubmit, setValue, register, control } = useForm<FormProps>();
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields } = useFieldArray({
     name: "category",
     control,
   });
@@ -41,9 +35,7 @@ const Category: FC = (props: any) => {
   }, []);
 
   async function getCate() {
-    const categoryDocs = await getDocs(
-      collection(db, "user", auth.currentUser.email, "category")
-    );
+    const categoryDocs = await getDocs(collection(db, "user", auth.currentUser.email, "category"));
     const forSetValue = [];
     categoryDocs.forEach((doc) => {
       const data = doc.data();
@@ -60,12 +52,7 @@ const Category: FC = (props: any) => {
     const cateObj = data.category.find((cate) => {
       return cate.docId === targetId;
     });
-    await updateDoc(
-      doc(db, "user", auth.currentUser.email, "category", targetId),
-      {
-        name: cateObj.cateName,
-      }
-    );
+    await updateDoc(doc(db, "user", auth.currentUser.email, "category", targetId), { name: cateObj.cateName });
     alert("カテゴリ名を更新しました。");
   }
 
@@ -76,11 +63,7 @@ const Category: FC = (props: any) => {
           <div className="titleArea">
             <h1 className="title-m">カテゴリー</h1>
             <div className="titleArea-r">
-              <button
-                type="button"
-                className="btn-s is-blue"
-                data-micromodal-trigger="modal-1"
-              >
+              <button type="button" className="btn-s is-blue" data-micromodal-trigger="modal-1">
                 新規作成
               </button>
             </div>

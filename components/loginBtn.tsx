@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import type { FC } from "react";
-import * as React from "react";
-import { useEffect, useState } from "react";
 import { auth } from "src/utils/firebase";
 
 export const LoginBtn: FC = (props: any) => {

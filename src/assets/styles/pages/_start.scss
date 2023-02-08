@@ -20,6 +20,9 @@
   position: relative;
   width: 100%;
   padding: 8.3% 0;
+  &-gosen{
+    aspect-ratio: 2.75;
+  }
 }
 
 .toAddBtn{
@@ -32,9 +35,6 @@
   position: fixed;
   top: 100px;
   right: 40px;
-  #stopbtn{
-    display: none;
-  }
 }
 
 .userSetting{

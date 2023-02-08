@@ -1,59 +1,40 @@
-import type { Firestore } from "firebase/firestore";
-import { collection, getDocs, getFirestore } from "firebase/firestore";
 import type { FC } from "react";
-import { useEffect, useState } from "react";
-import { auth } from "src/utils/firebase";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "src/auth/AuthProvider";
 
-const db: Firestore = getFirestore();
+import { getAllCate } from "@/assets/js/GetFromDB";
 
 type Props = {
   disabled?: boolean;
   defaultLable?: string;
-  selectRef: React.Ref<HTMLSelectElement>;
   onChange?: () => void;
+  setSelectedCateId?: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export async function getAllCate() {
-  const currentUser = auth.currentUser;
-  const categoryDocs = await getDocs(
-    collection(db, "user", currentUser.email, "category")
-  );
-  const dispData = categoryDocs.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      cateName: data.name,
-      docId: doc.id,
-    };
-  });
-  dispData.push({
-    cateName: "未設定",
-    docId: "default",
-  });
-  return dispData;
-}
-
 export const CategoryOption: FC<Props> = ({
-  disabled = true,
+  disabled = false,
   defaultLable = "選択してください",
-  selectRef,
   onChange,
+  setSelectedCateId,
 }) => {
   const [cateData, setCateData] = useState([]);
+  const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
     (async () => {
-      const dispData = await getAllCate();
+      const dispData = await getAllCate(currentUser);
       setCateData(dispData);
+      setSelectedCateId("default");
     })();
   }, []);
 
+  function onChangeSelect(event) {
+    onChange && onChange();
+    setSelectedCateId(event.target.value);
+  }
+
   return (
-    <select
-      id="categorySelect"
-      defaultValue={"default"}
-      ref={selectRef}
-      onChange={onChange}
-    >
+    <select id="categorySelect" defaultValue={"default"} onChange={onChangeSelect}>
       <option value="default" disabled={disabled}>
         {defaultLable}
       </option>

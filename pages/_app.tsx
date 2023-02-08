@@ -3,6 +3,8 @@ import "@/assets/styles/global.scss";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 
+import { AuthProvider } from "@/auth/AuthProvider";
+
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
@@ -15,7 +17,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <link rel="shortcut icon" href={"/img/favicon.ico"} />
         <link rel="apple-touch-icon" href={"/img/apple-touch-icon.png"} />
       </Head>
-      <Component {...pageProps} />
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
     </>
   );
 }

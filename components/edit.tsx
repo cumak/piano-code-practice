@@ -1,22 +1,16 @@
-import { CategoryOption } from "components/categoryOption";
+import { CategoryOption } from "components/CategoryOption";
 import { ModalNewGroup } from "components/modalNewGroup";
 import type { Firestore } from "firebase/firestore";
-import {
-  addDoc,
-  collection,
-  doc,
-  getFirestore,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { addDoc, collection, doc, getFirestore, serverTimestamp, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import type { FC } from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "src/utils/firebase";
 
-import { createWaonArea } from "@/assets/js/CreateWaonArea";
+import type { WaonGroup } from "@/assets/js/GetFromDB";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
+import { playWaon } from "@/assets/js/playWaon";
 import { ADD_ONPU_HEONKIGOU, ADD_ONPU_TOONKIGOU } from "@/constants";
 
 // Firestore のインスタンスを初期化
@@ -24,167 +18,182 @@ const db: Firestore = getFirestore();
 
 type Props = {
   isEditMode?: boolean;
+  fetchedWGProps?: FetchedWGProps;
 };
 
-export const Edit: FC<Props> = ({ isEditMode = false }) => {
+type SelectedWaon = {
+  code?: string;
+  index: number;
+  isSelected?: boolean;
+  notes?: {
+    num: number;
+    flat: boolean;
+    sharp: boolean;
+    isSelected?: boolean;
+  }[];
+};
+
+export type FetchedWGProps = {
+  canEdit?: boolean;
+  canPlay?: boolean;
+  waonAreaSelect?: boolean;
+  waonGroup?: WaonGroup;
+};
+
+export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
   const router = useRouter();
   const routeId = router.query.id;
-  const categorySelectRef = useRef<HTMLSelectElement>(null);
+  const [selectedWaons, setSelectedWaons] = useState<SelectedWaon[]>([]);
+  const [selectedCateId, setSelectedCateId] = useState<string>();
+
+  useEffect(() => {
+    if (isEditMode && fetchedWGProps?.waonGroup?.waons) {
+      const createSetData = () => {
+        const waons = fetchedWGProps.waonGroup.waons;
+        const forSetData: SelectedWaon[] = [];
+        waons.forEach((theWaon) => {
+          forSetData.push({
+            code: theWaon.code,
+            index: theWaon.index,
+            isSelected: false,
+            notes: theWaon.notes,
+          });
+        });
+        return forSetData;
+      };
+      setSelectedWaons([...createSetData()]);
+    }
+  }, []);
 
   useEffect(() => {
     onpuSlide();
-  }, []);
+  }, [selectedWaons]);
 
   // 「和音追加」押下
   function addWaonArea() {
     // コード4つ以上になってないか
-    const items = document.querySelectorAll(".onpuContainer-item");
-    if (items.length >= 4) {
+    if (selectedWaons.length >= 4) {
       alert("登録できるのは4つまでです。");
       return false;
     }
-    // コンテナ取得
-    const onpuContainer = document.querySelector(".onpuContainer");
-    createWaonArea({
-      onpuContainer: onpuContainer,
-      addEdit: true,
-      addPlay: true,
+    const newSelectedWaons = selectedWaons.map((selectedWaon) => {
+      selectedWaon.isSelected = false;
+      return selectedWaon;
     });
+    setSelectedWaons([
+      ...indexReNumber(newSelectedWaons),
+      { index: selectedWaons.length, isSelected: true, notes: [] },
+    ]);
   }
 
   // 上の音符を選んだとき
   function onpuSelected(target) {
-    // 追加する音符を作成
-    const html = target.closest(".selectOnpuTama-one").cloneNode(true);
-    const targetnum = parseInt(html.dataset.num);
-    const c = target.closest(".selectOnpuContainer-item-main-parts").classList;
-    const lrClass = c.contains("is-righthand")
-      ? ".is-righthand"
-      : ".is-lefthand";
+    const targetnum = target.closest(".selectOnpuTama-one").dataset.num;
 
-    // 追加先の要素を取得作成
-    let selectedItem = document.querySelector(".onpuContainer-item.is-select");
+    const selectedItem = selectedWaons.find((selectedWaon) => {
+      return selectedWaon.isSelected === true;
+    });
+
     // 追加先が選択されてなかったら終了
-    if (!selectedItem) {
-      const onpuContainer = document.querySelector(".onpuContainer");
-      if (onpuContainer.hasChildNodes()) {
-        alert("追加先のエリアを選択してください。");
-        return false;
-      } else {
-        // 和音が何も追加されてなかったら、和音エリア追加
-        addWaonArea();
-        selectedItem = document.querySelector(".onpuContainer-item.is-select");
-      }
+    if (!selectedItem && selectedWaons.length) {
+      alert("追加先のエリアを選択してください。");
+      return false;
     }
 
-    // 既存の音符を取得
-    const onpuTama = selectedItem.querySelector(lrClass + " .onpuTama");
-    const onpuTamaOne = selectedItem.querySelectorAll(
-      lrClass + " .onpuTama-one"
-    );
+    const isFirst = !selectedWaons.length ? true : false;
 
-    html.classList.remove("selectOnpuTama-one");
-    html.classList.add("onpuTama-one", "js-onpuslide-one", "is-select");
-    html.addEventListener("click", (e) => {
-      onpuCurrent(e.target);
+    // 同じものをクリックしたら追加しない
+    const isExistTama = selectedItem?.notes?.some((item) => {
+      return item.num === targetnum;
     });
-    // 最初の一つ目の音符を追加
-    if (!onpuTamaOne.length) {
-      removeSelectClass();
-      onpuTama.appendChild(html);
+    if (isExistTama) {
+      return false;
+    }
+
+    const addNotes = {
+      num: targetnum,
+      flat: false,
+      sharp: false,
+      isSelected: false,
+    };
+    if (isFirst) {
+      setSelectedWaons([
+        {
+          code: "",
+          index: 0,
+          isSelected: true,
+          notes: [addNotes],
+        },
+      ]);
     } else {
-      // 同じものをクリックしたら追加しない
-      const isExistTama = [...onpuTamaOne].some((e: HTMLElement) => {
-        const num = parseInt(e.dataset.num);
-        return num === targetnum;
+      const newState = selectedWaons.map((waon) => {
+        if (waon.isSelected) {
+          waon.notes.push(addNotes);
+          sortNotes(waon.notes);
+          waon.notes.forEach((e) => {
+            return (e.isSelected = false);
+          });
+          return waon;
+        } else {
+          return waon;
+        }
       });
-      if (isExistTama) {
-        return;
-      }
-      removeSelectClass();
-      // data-numを見て、現在のnumと次の要素のnumを取得して順番になるように追加する
-      for (let i = 0; i < onpuTamaOne.length; i++) {
-        const thisHtml: any = onpuTamaOne[i];
-        const thisHtmlnum = parseInt(thisHtml.dataset.num);
-        const thisnexthtml: any = onpuTamaOne[i + 1];
-        if (thisHtmlnum > targetnum) {
-          thisHtml.before(html);
-          break;
-        }
-        if (!thisnexthtml) {
-          thisHtml.after(html);
-          break;
-        }
-        const thisNextHtmlnum = parseInt(thisnexthtml.dataset.num);
-        if (thisHtmlnum < targetnum && thisNextHtmlnum > targetnum) {
-          thisHtml.after(html);
-          break;
-        }
-      }
+      setSelectedWaons([...newState]);
     }
-    onpuSlide();
-  }
-
-  // addMainスペースの全てのis-selectクラスを削除（連続してシャープやフラットを付与するために直帰で追加した音符のみis-selectにし、他はis-selectを削除するため）
-  function removeSelectClass() {
-    const allOnpuTamaOne = document.querySelectorAll(".addMain .onpuTama-one");
-    [...allOnpuTamaOne].forEach((e) => {
-      e.classList.remove("is-select");
-    });
-  }
-
-  // 音符を選択したときにis-selectクラスを付与/削除
-  function onpuCurrent(target) {
-    const e = target.closest(".onpuTama-one");
-    e.classList.toggle("select");
   }
 
   // 和音削除ボタン押下
   function eraseWaon() {
-    const itemSelect = document.querySelectorAll(
-      ".onpuContainer-item.is-select"
-    );
-    if (itemSelect.length) {
-      [...itemSelect].forEach((e) => {
-        e.remove();
-      });
-    } else {
+    const filterdArr = selectedWaons.filter((e) => {
+      return !e.isSelected;
+    });
+    if (filterdArr.length === selectedWaons.length) {
       alert("削除したい和音を選択してください");
+      return false;
     }
+    setSelectedWaons([...indexReNumber(filterdArr)]);
   }
 
   // 音符削除ボタン押下
   function eraseOnpu() {
-    const onpuTamaSelect = document.querySelectorAll(".onpuTama .is-select");
-    onpuTamaSelect.forEach((e) => {
-      e.remove();
+    const newSelectedWaons = selectedWaons.map((selectedWaon) => {
+      const filterdNote = selectedWaon.notes.filter((note) => {
+        return !note.isSelected;
+      });
+      selectedWaon.notes = filterdNote;
+      return selectedWaon;
     });
-    eraseOnpuLine();
-    onpuSlide();
+    setSelectedWaons([...newSelectedWaons]);
   }
 
   // シャープ追加ボタン押下
   function addSharp() {
-    const onpuTamaSelect = document.querySelectorAll(".onpuTama .is-select");
-    onpuTamaSelect.forEach((e) => {
-      e.classList.toggle("is-sharp");
-      e.classList.remove("is-flat");
+    const newSelectedWaons = selectedWaons.map((selectedWaon) => {
+      const customNote = selectedWaon.notes.map((note) => {
+        if (note.isSelected) {
+          note.sharp = !note.sharp;
+        }
+        return note;
+      });
+      selectedWaon.notes = customNote;
+      return selectedWaon;
     });
-  }
-  // フラット追加ボタン押下
-  function addFlat() {
-    const onpuTamaSelect = document.querySelectorAll(".onpuTama .is-select");
-    onpuTamaSelect.forEach((e) => {
-      e.classList.toggle("is-flat");
-      e.classList.remove("is-sharp");
-    });
+    setSelectedWaons([...newSelectedWaons]);
   }
 
-  function eraseOnpuLine() {
-    const onpuLine = document.querySelectorAll(".addMain .onpuLine-item");
-    onpuLine.forEach((e: any) => {
-      e.style.opacity = 0;
+  // フラット追加ボタン押下
+  function addFlat() {
+    const newSelectedWaons = selectedWaons.map((selectedWaon) => {
+      const customNote = selectedWaon.notes.map((note) => {
+        if (note.isSelected) {
+          note.flat = !note.flat;
+        }
+        return note;
+      });
+      selectedWaon.notes = customNote;
+      return selectedWaon;
     });
+    setSelectedWaons([...newSelectedWaons]);
   }
 
   // 登録ボタン押した時の入力チェック
@@ -219,9 +228,7 @@ export const Edit: FC<Props> = ({ isEditMode = false }) => {
     const items = addMain.childNodes;
     const isCheckNG = [...items].some((item: HTMLElement) => {
       const onpuTamas = item.querySelectorAll(".onpuTama");
-      const codeInput = item.querySelector(
-        ".onpuContainer-item-opt-code input"
-      );
+      const codeInput = item.querySelector(".onpuContainer-item-opt-code input");
       // 入力チェック
       return checkInput(items, codeInput, onpuTamas) === false;
     });
@@ -243,22 +250,12 @@ export const Edit: FC<Props> = ({ isEditMode = false }) => {
     const items = document.querySelectorAll(".addMain .onpuContainer-item");
 
     const user = auth.currentUser;
-    const cateId = categorySelectRef.current.value;
-
-    // TODO:いるかもしれない。編集モードの時は、waonコレクションの和音をDeleteしておく
-    // if (isEditMode) {
-    //   const waonCollection = waonGroupRef.collection("waon");
-    //   const deletePs = await deleteCollection(waonCollection, 4);
-    //   waonAdded.push(deletePs);
-    // }
 
     const waonObj = [];
     items.forEach((item, index) => {
       const notes = [];
       const one = item.querySelectorAll(".onpuTama-one");
-      const code: HTMLInputElement = item.querySelector(
-        ".onpuContainer-item-opt-code input"
-      );
+      const code: HTMLInputElement = item.querySelector(".onpuContainer-item-opt-code input");
       one.forEach((tama: HTMLElement) => {
         const dataNumber = parseInt(tama.dataset.num);
         const isSharp = tama.classList.contains("is-sharp") ? true : false;
@@ -278,7 +275,7 @@ export const Edit: FC<Props> = ({ isEditMode = false }) => {
     const newWaonGroup = {
       waons: [...waonObj],
       modifiedAt: serverTimestamp(),
-      category: cateId,
+      category: selectedCateId,
     };
     if (!isEditMode) {
       newWaonGroup["createdAt"] = serverTimestamp();
@@ -288,28 +285,65 @@ export const Edit: FC<Props> = ({ isEditMode = false }) => {
       await updateDoc(doc(wgCollection, routeId as string), {
         waons: waonObj,
         modifiedAt: serverTimestamp(),
-        category: cateId,
+        category: selectedCateId,
       });
     } else {
       await addDoc(wgCollection, {
         waons: waonObj,
         modifiedAt: serverTimestamp(),
         createdAt: serverTimestamp(),
-        category: cateId,
+        category: selectedCateId,
       });
     }
     alert("和音を追加しました。");
     // 新規追加モードなら登録後クリアする
     if (!isEditMode) {
-      initContainer();
+      setSelectedWaons([]);
     }
   }
 
-  function initContainer() {
-    const items = document.querySelectorAll(".onpuContainer-item");
-    [...items].forEach((e) => {
-      e.remove();
+  function indexReNumber(arr: SelectedWaon[]) {
+    return arr.map((e, i) => {
+      e.index = i;
+      return e;
     });
+  }
+
+  function sortNotes(notes) {
+    return notes.sort((a, b) => {
+      if (Number(a["num"]) > Number(b["num"])) return 1;
+      if (Number(a["num"]) < Number(b["num"])) return -1;
+      return 0;
+    });
+  }
+
+  function selectToggleWaonArea(currentWaon) {
+    const newSelectedWaons = selectedWaons.map((e, i) => {
+      if (currentWaon.index === i) {
+        e.isSelected = !e.isSelected;
+      } else {
+        e.isSelected = false;
+      }
+      return e;
+    });
+    setSelectedWaons([...newSelectedWaons]);
+  }
+
+  function toggleNoteSelect(event, noteIndex, currentWaon) {
+    event.stopPropagation();
+    const newSelectedWaon = selectedWaons.map((selectedWaon, i) => {
+      if (i === currentWaon.index) {
+        const newNotes = selectedWaon.notes.map((note, j) => {
+          if (j === noteIndex) {
+            note.isSelected = !note.isSelected;
+          }
+          return note;
+        });
+        selectedWaon.notes = newNotes;
+      }
+      return selectedWaon;
+    });
+    setSelectedWaons([...newSelectedWaon]);
   }
 
   return (
@@ -341,11 +375,7 @@ export const Edit: FC<Props> = ({ isEditMode = false }) => {
                               return onpuSelected(e.target);
                             }}
                           >
-                            <Image
-                              src="/img/onpu.svg"
-                              alt={onpu.onpuName}
-                              fill
-                            />
+                            <Image src="/img/onpu.svg" alt={onpu.onpuName} fill />
                           </span>
                         );
                       })}
@@ -368,11 +398,7 @@ export const Edit: FC<Props> = ({ isEditMode = false }) => {
                               return onpuSelected(e.target);
                             }}
                           >
-                            <Image
-                              src="/img/onpu.svg"
-                              alt={onpu.onpuName}
-                              fill
-                            />
+                            <Image src="/img/onpu.svg" alt={onpu.onpuName} fill />
                           </span>
                         );
                       })}
@@ -390,20 +416,115 @@ export const Edit: FC<Props> = ({ isEditMode = false }) => {
                     <Image src="/img/gosen-add.svg" alt="" fill />
                   </div>
                   {/* 決定した和音 */}
-                  <div className="onpuContainer"></div>
+                  <div className="onpuContainer">
+                    {selectedWaons.map((waon) => {
+                      return (
+                        <div key={waon.index} className={`onpuContainer-item ${waon.isSelected && "is-select"}`}>
+                          <button
+                            type="button"
+                            className="onpuContainer-item-main"
+                            onClick={() => {
+                              return selectToggleWaonArea(waon);
+                            }}
+                          >
+                            <div className="onpuContainer-item-main-parts is-righthand js-onpuslide">
+                              <div className="onpuTama">
+                                {waon.notes?.map((onpu, noteIndex) => {
+                                  return (
+                                    onpu.num <= 18 && (
+                                      <span
+                                        key={onpu.num}
+                                        className={`onpuTama-one js-onpuslide-one ${
+                                          onpu.isSelected ? "is-select" : ""
+                                        } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
+                                        role="button"
+                                        tabIndex={noteIndex as number}
+                                        data-num={onpu.num}
+                                        onClick={(e) => {
+                                          toggleNoteSelect(e, noteIndex, waon);
+                                        }}
+                                        onKeyDown={(e) => {
+                                          toggleNoteSelect(e, noteIndex, waon);
+                                          if (e.key === "Backspace") {
+                                            eraseOnpu();
+                                          }
+                                        }}
+                                      >
+                                        <Image src="/img/onpu.svg" alt="" fill />
+                                      </span>
+                                    )
+                                  );
+                                })}
+                              </div>
+                              <div className="onpuLine">
+                                <span className="onpuLine-item is-top1"></span>
+                                <span className="onpuLine-item is-top2"></span>
+                                <span className="onpuLine-item is-bottom1"></span>
+                                <span className="onpuLine-item is-bottom2"></span>
+                              </div>
+                            </div>
+                            <div className="onpuContainer-item-main-parts is-lefthand js-onpuslide">
+                              <div className="onpuTama">
+                                {waon.notes?.map((onpu, noteIndex) => {
+                                  return (
+                                    onpu.num >= 19 && (
+                                      <span
+                                        key={onpu.num}
+                                        className={`onpuTama-one js-onpuslide-one ${
+                                          onpu.isSelected ? "is-select" : ""
+                                        } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
+                                        role="button"
+                                        tabIndex={noteIndex as number}
+                                        data-num={onpu.num}
+                                        onClick={(e) => {
+                                          toggleNoteSelect(e, noteIndex, waon);
+                                        }}
+                                        onKeyDown={(e) => {
+                                          toggleNoteSelect(e, noteIndex, waon);
+                                          if (e.key === "Backspace") {
+                                            eraseOnpu();
+                                          }
+                                        }}
+                                      >
+                                        <Image src="/img/onpu.svg" alt="" fill />
+                                      </span>
+                                    )
+                                  );
+                                })}
+                              </div>
+                              <div className="onpuLine">
+                                <span className="onpuLine-item is-top1"></span>
+                                <span className="onpuLine-item is-top2"></span>
+                                <span className="onpuLine-item is-bottom1"></span>
+                                <span className="onpuLine-item is-bottom2"></span>
+                              </div>
+                            </div>
+                          </button>
+                          <div className="onpuContainer-item-opt">
+                            <div className="onpuContainer-item-opt-code">
+                              <input type="text" name="code" defaultValue={waon.code} />
+                            </div>
+                            <button type="button" className="onpuContainer-item-opt-sound" onClick={playWaon}>
+                              <span className="onpuContainer-item-opt-sound-btn">♪</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
             <div className="actionArea">
               <div className="actionBtns">
                 <div className="actionBtns-row is-waon">
-                  <button className="btn-grad is-yellow" onClick={addWaonArea}>
+                  <button type="button" className="btn-grad is-yellow" onClick={addWaonArea}>
                     和音追加
                   </button>
-                  <button className="btn-grad is-green" onClick={eraseWaon}>
+                  <button type="button" className="btn-grad is-green" onClick={eraseWaon}>
                     和音削除
                   </button>
-                  <button className="btn-grad is-green" onClick={eraseOnpu}>
+                  <button type="button" className="btn-grad is-green" onClick={eraseOnpu}>
                     音符削除
                   </button>
                 </div>
@@ -434,12 +555,9 @@ export const Edit: FC<Props> = ({ isEditMode = false }) => {
                 <div className="actionBtns-row is-group">
                   <section className="actionBtns-row-group">
                     <h2 className="actionBtns-row-group-title">カテゴリー</h2>
-                    <CategoryOption selectRef={categorySelectRef} />
+                    <CategoryOption setSelectedCateId={setSelectedCateId} />
                     <div className="actionBtns-row-group-newBtn">
-                      <span
-                        className="btn-plus"
-                        data-micromodal-trigger="modal-1"
-                      >
+                      <span className="btn-plus" data-micromodal-trigger="modal-1">
                         +
                       </span>
                     </div>
@@ -449,12 +567,7 @@ export const Edit: FC<Props> = ({ isEditMode = false }) => {
             </div>
           </div>
           <div className="registerBtn">
-            <input
-              className="btn-big is-blue"
-              type="button"
-              value="登録する"
-              onClick={register}
-            />
+            <input className="btn-big is-blue" type="button" value="登録する" onClick={register} />
           </div>
         </div>
       </form>

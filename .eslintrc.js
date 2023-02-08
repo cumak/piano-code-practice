@@ -72,7 +72,7 @@ module.exports = {
     {
       files: [
         "pages/index.tsx",
-        "pages/**/*/index.tsx",
+        "pages/**/*/*.tsx",
         "pages/_app.tsx",
         "pages/_document.tsx",
       ],

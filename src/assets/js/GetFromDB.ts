@@ -1,14 +1,8 @@
-import {
-  getFirestore,
-  getDocs,
-  collection,
-  orderBy,
-  query,
-  doc,
-  getDoc,
-} from "firebase/firestore";
-import type { Firestore, DocumentData } from "firebase/firestore";
+import type { DocumentData, Firestore } from "firebase/firestore";
+import { collection, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
+
 const db: Firestore = getFirestore();
+import { auth } from "@/utils/firebase";
 
 export type GetWaonGroupDataWithId = {
   waonGroupData?: DocumentData;
@@ -37,16 +31,38 @@ export type theWaon =
     }
   | DocumentData;
 
-export const getWaonGroupDataWithId = async (currentUser) => {
-  let userWaonGroupField: GetWaonGroupDataWithId = [];
-  const wgRef = collection(db, "user", currentUser.email, "waonGroup");
-  const sortedWgRef = query(wgRef, orderBy("createdAt", "asc"));
-  const wg = await getDocs(sortedWgRef);
-  for (let i = 0; i < wg.docs.length; i++) {
-    userWaonGroupField[i] = {
-      waonGid: wg.docs[i].id, //IDも配列に加える
-      waonGroupData: wg.docs[i].data(),
-    };
-  }
+export type GetAllCate = {
+  cateName: string;
+  docId: string;
+}[];
+
+export const getWaonGroupDataWithId = async () => {
+  const userWaonGroupField: GetWaonGroupDataWithId = [];
+  auth.onAuthStateChanged(async (user) => {
+    const wgRef = collection(db, "user", user.email, "waonGroup");
+    const sortedWgRef = query(wgRef, orderBy("createdAt", "asc"));
+    const wg = await getDocs(sortedWgRef);
+    for (let i = 0; i < wg.docs.length; i++) {
+      userWaonGroupField[i] = {
+        waonGid: wg.docs[i].id, //IDも配列に加える
+        waonGroupData: wg.docs[i].data(),
+      };
+    }
+  });
   return userWaonGroupField;
 };
+
+export async function getAllCate(currentUser): Promise<GetAllCate> {
+  if (!currentUser) {
+    return;
+  }
+  const categoryDocs = await getDocs(collection(db, "user", currentUser.email, "category"));
+  const dispData = categoryDocs.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      cateName: data.name,
+      docId: doc.id,
+    };
+  });
+  return dispData;
+}

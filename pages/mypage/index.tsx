@@ -1,152 +1,72 @@
-import { getAllCate } from "components/categoryOption";
 import { Layout } from "components/layout";
 import type { Firestore } from "firebase/firestore";
 import { deleteDoc, doc, getFirestore } from "firebase/firestore";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import type { FC } from "react";
-import { useEffect, useState } from "react";
-import { auth } from "src/utils/firebase";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "src/auth/AuthProvider";
 
-import { appendWaon } from "@/assets/js/AppendWaon";
-import { createWaonArea } from "@/assets/js/CreateWaonArea";
-import type { GetWaonGroupDataWithId } from "@/assets/js/GetFromDB";
-import { getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
+import type { GetAllCate, GetWaonGroupDataWithId } from "@/assets/js/GetFromDB";
+import { getAllCate, getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
+import { playWaon } from "@/assets/js/playWaon";
 
 const db: Firestore = getFirestore();
 
 const Mypage: FC = () => {
+  const { currentUser } = useContext(AuthContext);
   const router = useRouter();
-  const [waonGroupDataWithId, setWaonGroupDataWithId] =
-    useState<GetWaonGroupDataWithId>([]);
+  const [waonGroupDataWithId, setWaonGroupDataWithId] = useState<GetWaonGroupDataWithId>([]);
+  const [allCate, setAllCate] = useState<GetAllCate>();
 
   useEffect(() => {
-    auth.onAuthStateChanged(async (user) => {
-      if (!user) {
-        router.push("/login/");
-      } else {
-        const currentUser = auth.currentUser;
-        const data = await getWaonGroupDataWithId(currentUser);
-        setWaonGroupDataWithId(data);
+    (async () => {
+      const data = await getWaonGroupDataWithId();
+      if (!data) {
+        return;
       }
-    });
-  }, []);
+      setWaonGroupDataWithId(data);
+    })();
+    (async () => {
+      const data = await getAllCate(currentUser);
+      data && setAllCate(data);
+    })();
+  }, [currentUser]);
 
   useEffect(() => {
-    myWaonLoad();
+    onpuSlide();
   }, [waonGroupDataWithId]);
 
-  async function myWaonLoad() {
-    for (let i = 0; i < waonGroupDataWithId.length; i++) {
-      // 和音グループの数だけ5線を出力
-      const waonGroupData = waonGroupDataWithId[i].waonGroupData;
-      const waonGid = waonGroupDataWithId[i].waonGid;
-      const categoryId = waonGroupDataWithId[i].waonGroupData.category;
-
-      const allCate = await getAllCate();
-      const cateObj = allCate.find((cate) => {
-        return cate.docId === categoryId;
-      });
-
-      const myWaonHtml = `
-          <div class="myWaon-gosen" data-containernum="${i}" data-id="${waonGid}">
-            <div class="myWaonBtns">
-              <div class="myWaonBtns-l">
-                <div class="myWaonBtns-btn">
-                  <span class="btn-grad is-gray deleteBtn">削除</span>
-                </div>
-                <div class="myWaonBtns-btn">
-                  <span class="btn-grad is-green editBtn">編集</span>
-                </div>
-              </div>
-              <div class="myWaonBtns-r">
-                <div class="categoryIcon">${cateObj.cateName}</div>
-              </div>
-            </div>
-            <div class="addMain">
-              <div class="addMain-inner">
-                <div class="addMain-gosen"><img src="/img/gosen-add.svg" alt="" /></div>
-                <div class="onpuContainer"></div>
-              </div>
-            </div>
-            </div>
-        </div>
-      `;
-      const wrapper = document.querySelector(".myWaon");
-      wrapper.insertAdjacentHTML("beforeend", myWaonHtml);
-
-      // 和音itemを作る (htmlを丸ごと挿入しただけなので、containerやitemはiとかjを使って個別に取得)
-      const onpuContainers = document.querySelectorAll(".onpuContainer");
-      const onpuContainer = onpuContainers[i];
-
-      for (let j = 0; j < waonGroupData.waons.length; j++) {
-        createWaonArea({ onpuContainer, addPlay: true });
-        const items = onpuContainer.querySelectorAll(".onpuContainer-item");
-        const item = items[j];
-        appendWaon(item, waonGroupData.waons[j].notes);
-        // コードネームを挿入
-        const code = waonGroupData.waons[j].code;
-        const codeinput: HTMLInputElement = item.querySelector(
-          ".onpuContainer-item-opt-code input"
-        );
-        codeinput.value = code;
-      }
-    }
-    onpuSlide();
-
-    // 削除ボタンイベントリスナ追加
-    const deleteBtn = document.querySelectorAll(".deleteBtn");
-    deleteBtn.forEach((e) => {
-      e.addEventListener("click", pushDeleteBtn);
+  function getTargetCateName(cateId) {
+    const cate = allCate?.find((cate) => {
+      return cate.docId === cateId;
     });
-    // 編集ボタンイベントリスナ追加
-    const editBtn = document.querySelectorAll(".editBtn");
-    editBtn.forEach((e) => {
-      e.addEventListener("click", editGroup);
-    });
+    return cate?.cateName;
   }
 
   // 削除ボタン
-  function pushDeleteBtn(e) {
+  function pushDeleteBtn(waonGroupId) {
     if (window.confirm("この和音グループを削除しますか？")) {
-      deleteGroup(e);
+      deleteDoc(doc(db, "user", currentUser.email, "waonGroup", waonGroupId))
+        .then(() => {
+          alert("削除しました");
+          refresh();
+        })
+        .catch((err) => {
+          console.error(err);
+          alert("削除に失敗しました");
+        });
     }
-  }
-
-  async function deleteGroup(e) {
-    const currentUser = auth.currentUser;
-    const target = e.target;
-    const myWaon = target.closest(".myWaon-gosen");
-    const waonGroupId = myWaon.dataset.id;
-
-    deleteDoc(doc(db, "user", currentUser.email, "waonGroup", waonGroupId))
-      .then(() => {
-        alert("削除しました");
-        refresh();
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("削除に失敗しました");
-      });
   }
 
   async function refresh() {
-    const currentUser = auth.currentUser;
-    reset();
-    const newWaonGroupDataWithId = await getWaonGroupDataWithId(currentUser);
+    const newWaonGroupDataWithId = await getWaonGroupDataWithId();
     setWaonGroupDataWithId([...newWaonGroupDataWithId]);
   }
 
-  function reset() {
-    const myWaonEl = document.querySelector(".myWaon");
-    while (myWaonEl.firstChild) {
-      myWaonEl.removeChild(myWaonEl.firstChild);
-    }
-  }
-
   // 編集ボタン
-  function editGroup(e) {
-    const id = e.target.closest(".myWaon-gosen").dataset.id;
+  function editGroup(id) {
     router.push("./add/" + id);
   }
 
@@ -155,7 +75,122 @@ const Mypage: FC = () => {
       <main className="main">
         <div className="mainWrapper">
           <div className="wrapper">
-            <div className="myWaon"></div>
+            <div className="myWaon">
+              {waonGroupDataWithId.map((waonGroup) => {
+                return (
+                  <div key={waonGroup.waonGid} className="myWaon-gosen" data-containernum="${i}" data-id="${waonGid}">
+                    <div className="myWaonBtns">
+                      <div className="myWaonBtns-l">
+                        <div className="myWaonBtns-btn">
+                          <button
+                            type="button"
+                            className="btn-grad is-gray deleteBtn"
+                            onClick={() => {
+                              return pushDeleteBtn(waonGroup.waonGid);
+                            }}
+                          >
+                            削除
+                          </button>
+                        </div>
+                        <div className="myWaonBtns-btn">
+                          <button
+                            type="button"
+                            className="btn-grad is-green editBtn"
+                            onClick={() => {
+                              return editGroup(waonGroup.waonGid);
+                            }}
+                          >
+                            編集
+                          </button>
+                        </div>
+                      </div>
+                      <div className="myWaonBtns-r">
+                        <div className="categoryIcon">{`${getTargetCateName(waonGroup.waonGroupData.category)}`}</div>
+                      </div>
+                    </div>
+                    <div className="addMain">
+                      <div className="addMain-inner">
+                        <div className="addMain-gosen">
+                          <img src="/img/gosen-add.svg" alt="" />
+                        </div>
+                        <div className="onpuContainer">
+                          {waonGroup.waonGroupData.waons.map((waon) => {
+                            return (
+                              <div key={waon.index} className="onpuContainer-item">
+                                <div className="onpuContainer-item-main">
+                                  <div className="onpuContainer-item-main-parts is-righthand js-onpuslide">
+                                    <div className="onpuTama">
+                                      {waon.notes?.map((onpu, noteIndex) => {
+                                        return (
+                                          onpu.num <= 18 && (
+                                            <span
+                                              key={onpu.num}
+                                              className={`onpuTama-one js-onpuslide-one ${
+                                                onpu.isSelected ? "is-select" : ""
+                                              } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
+                                              role="button"
+                                              tabIndex={noteIndex as number}
+                                              data-num={onpu.num}
+                                            >
+                                              <Image src="/img/onpu.svg" alt="" fill />
+                                            </span>
+                                          )
+                                        );
+                                      })}
+                                    </div>
+                                    <div className="onpuLine">
+                                      <span className="onpuLine-item is-top1"></span>
+                                      <span className="onpuLine-item is-top2"></span>
+                                      <span className="onpuLine-item is-bottom1"></span>
+                                      <span className="onpuLine-item is-bottom2"></span>
+                                    </div>
+                                  </div>
+                                  <div className="onpuContainer-item-main-parts is-lefthand js-onpuslide">
+                                    <div className="onpuTama">
+                                      {waon.notes?.map((onpu, noteIndex) => {
+                                        return (
+                                          onpu.num >= 19 && (
+                                            <span
+                                              key={onpu.num}
+                                              className={`onpuTama-one js-onpuslide-one ${
+                                                onpu.isSelected ? "is-select" : ""
+                                              } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
+                                              role="button"
+                                              tabIndex={noteIndex as number}
+                                              data-num={onpu.num}
+                                            >
+                                              <Image src="/img/onpu.svg" alt="" fill />
+                                            </span>
+                                          )
+                                        );
+                                      })}
+                                    </div>
+                                    <div className="onpuLine">
+                                      <span className="onpuLine-item is-top1"></span>
+                                      <span className="onpuLine-item is-top2"></span>
+                                      <span className="onpuLine-item is-bottom1"></span>
+                                      <span className="onpuLine-item is-bottom2"></span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="onpuContainer-item-opt">
+                                  <div className="onpuContainer-item-opt-code">
+                                    <input type="text" name="code" defaultValue={waon.code} />
+                                  </div>
+                                  <button type="button" className="onpuContainer-item-opt-sound" onClick={playWaon}>
+                                    <span className="onpuContainer-item-opt-sound-btn">♪</span>
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </main>

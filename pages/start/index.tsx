@@ -1,43 +1,45 @@
-import { CategoryOption } from "components/categoryOption";
+import { CategoryOption } from "components/CategoryOption";
 import { Layout } from "components/layout";
 import ToggleBtn from "components/togglebtn";
-import { useRouter } from "next/router";
+import Image from "next/image";
 import type { FC } from "react";
-import { useEffect, useRef, useState } from "react";
-import { auth } from "src/utils/firebase";
+import { useContext, useEffect, useRef, useState } from "react";
+import { AuthContext } from "src/auth/AuthProvider";
 
-import { appendWaon } from "@/assets/js/AppendWaon";
-import { createWaonArea } from "@/assets/js/CreateWaonArea";
 import type { GetWaonGroupDataWithId, WaonGroup } from "@/assets/js/GetFromDB";
 import { getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import msgBox from "@/assets/js/MsgBox";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
 
 const Start: FC = () => {
-  const router = useRouter();
-  let timer, qaTimer;
+  const { currentUser } = useContext(AuthContext);
 
-  const categorySelectRef = useRef<HTMLSelectElement>(null);
   const codeRef = useRef<HTMLDivElement>(null);
+  const onpuContainerRef = useRef<HTMLDivElement>(null);
 
   const [isShuffle, setIsShuffle] = useState(false);
-  const [waonsGroupMoto, setWaonsGroupMoto] =
-    useState<GetWaonGroupDataWithId>(); //ロードした和音グループ(カテゴリフィルター前を記憶)
-  const [waonsArrMoto, setWaonsArrMoto] = useState<GetWaonGroupDataWithId>(); //ロードした和音とコード(シャッフル前を記憶)
-  const [waonsArr, setWaonsArr] = useState<GetWaonGroupDataWithId>(); //ロードした和音とコード
+  //ロードした和音グループ(カテゴリフィルター前を記憶)
+  const [waonsGroupMoto, setWaonsGroupMoto] = useState<GetWaonGroupDataWithId>();
+  //ロードした和音とコード(シャッフル前を記憶)
+  const [waonsArrMoto, setWaonsArrMoto] = useState<GetWaonGroupDataWithId>();
+  //ロードした和音とコード
+  const [waonsArr, setWaonsArr] = useState<GetWaonGroupDataWithId>();
+  // アニメーションで表示されている和音とコード
+  const [currentWaonGroup, setCurrentWaonGroup] = useState<WaonGroup>();
+
+  const [btnStartOrStop, setbtnStartOrStop] = useState<"start" | "stop">("start");
+  const [selectedCateId, setSelectedCateId] = useState<string>("default");
+  const [timer, setTimer] = useState<NodeJS.Timer>();
+  const [qaTimer, setQaTimer] = useState<NodeJS.Timer>();
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (!user) {
-        router.push("/login/");
-      } else {
-        if (!categorySelectRef) {
-          return false;
-        }
-        init();
-      }
-    });
-  }, [categorySelectRef]);
+    init();
+  }, []);
+
+  useEffect(() => {
+    categoryChange();
+  }, [selectedCateId]);
+
   useEffect(() => {
     if (isShuffle) {
       const shufflewaon = shuffle(waonsArr);
@@ -51,6 +53,14 @@ const Start: FC = () => {
     const waonInfo = await loadWaon();
     setWaonsArr(waonInfo);
     setWaonsArrMoto(waonInfo);
+    setCurrentWaonGroup(waonInfo?.[0]?.waonGroupData.waons);
+  }
+
+  async function loadWaon() {
+    const waonGroupDataWithId = await getWaonGroupDataWithId();
+    setWaonsGroupMoto(waonGroupDataWithId);
+    const filterdWaonGroupData = getCateFilteredWaon(waonGroupDataWithId);
+    return filterdWaonGroupData;
   }
 
   function shuffle([...array]) {
@@ -62,9 +72,12 @@ const Start: FC = () => {
   }
 
   function play() {
+    if (!waonsArr) {
+      return;
+    }
     if (!waonsArr.length) {
       alert("このカテゴリーの和音は登録されていません。");
-      return false;
+      return;
     }
     const qEl = document.getElementById("qTime") as HTMLInputElement;
     const aEl = document.getElementById("aTime") as HTMLInputElement;
@@ -75,27 +88,26 @@ const Start: FC = () => {
 
     let i = 0;
 
-    // スタートボタンをストップに
-    const startbtn = document.getElementById("startbtn");
-    const stopbtn = document.getElementById("stopbtn");
-    startbtn.style.display = "none";
-    stopbtn.style.display = "flex";
+    setbtnStartOrStop("stop");
     // メッセージをだす
     msgBox("Start!", 1000);
 
-    timer = setInterval(() => {
+    const timer = setInterval(() => {
       start(qTime);
     }, allTime);
+    setTimer(timer);
 
     start(qTime);
 
     function start(qTime) {
-      containerReset();
-      const waonGroup = waonsArr[i].waonGroupData as WaonGroup;
-      loadTheCode(waonGroup);
-      qaTimer = setTimeout(() => {
-        loadTheWaon(waonGroup);
+      codeRef.current.style.opacity = "1";
+      onpuContainerRef.current.style.opacity = "0";
+      console.log("3", waonsArr);
+      setCurrentWaonGroup(waonsArr[i].waonGroupData as WaonGroup);
+      const qaTimer = setTimeout(() => {
         i++;
+        onpuSlide();
+        onpuContainerRef.current.style.opacity = "1";
         // 最後のループ
         if (i === waonsArr.length) {
           clearInterval(timer);
@@ -105,94 +117,42 @@ const Start: FC = () => {
           }, qTime);
         }
       }, qTime);
+      setQaTimer(qaTimer);
     }
   }
 
   function stop() {
     clearInterval(timer);
     clearInterval(qaTimer);
-    containerReset();
-    // ストップボタンをスタートに
-    const startbtn = document.getElementById("startbtn");
-    const stopbtn = document.getElementById("stopbtn");
-    startbtn.style.display = "flex";
-    stopbtn.style.display = "none";
-  }
-
-  async function loadWaon() {
-    const currentUser = auth.currentUser;
-    const waonGroupDataWithId = await getWaonGroupDataWithId(currentUser);
-    setWaonsGroupMoto(waonGroupDataWithId);
-    const filterdWaonGroupData = getCateFilteredWaon(waonGroupDataWithId);
-    return filterdWaonGroupData;
+    codeRef.current.style.opacity = "0";
+    onpuContainerRef.current.style.opacity = "0";
+    setbtnStartOrStop("start");
   }
 
   async function categoryChange() {
-    let filterdWaonGroupData = getCateFilteredWaon(waonsGroupMoto);
-    filterdWaonGroupData = isShuffle
-      ? shuffle(filterdWaonGroupData)
-      : filterdWaonGroupData;
-    setWaonsArr(filterdWaonGroupData);
+    if (!waonsGroupMoto) {
+      return;
+    }
+    const filterdWaonGroupData = getCateFilteredWaon(waonsGroupMoto);
+
+    const shuffleWaonGroupData = isShuffle ? shuffle(filterdWaonGroupData) : filterdWaonGroupData;
+    setWaonsArr([...shuffleWaonGroupData]);
   }
 
-  function getCateFilteredWaon(waonGroupDataWithId: GetWaonGroupDataWithId) {
-    const cateId = categorySelectRef.current.value;
-
-    if (cateId === "default") {
-      return waonGroupDataWithId;
+  function getCateFilteredWaon(arr: GetWaonGroupDataWithId) {
+    if (selectedCateId === "default") {
+      return arr;
     }
-    const filterdWg = waonGroupDataWithId.filter((wg) => {
-      return wg.waonGroupData.category === cateId;
+    const filterdWg = arr?.filter((wg) => {
+      return wg.waonGroupData.category === selectedCateId;
     });
     return filterdWg;
-  }
-
-  function containerReset() {
-    const onpuContainer = document.querySelector(
-      ".onpuContainer"
-    ) as HTMLElement;
-    const codeWrap = document.querySelector(".code") as HTMLElement;
-    if (onpuContainer?.hasChildNodes()) {
-      while (onpuContainer.firstChild) {
-        onpuContainer.removeChild(onpuContainer.firstChild);
-      }
-    }
-    if (codeWrap?.hasChildNodes()) {
-      while (codeWrap.firstChild) {
-        codeWrap.removeChild(codeWrap.firstChild);
-      }
-    }
-  }
-
-  // スタート後に和音を描画
-  function loadTheWaon(waonGroup: WaonGroup) {
-    const onpuContainer = document.querySelector(".onpuContainer");
-    // 音符Itemごとの処理 waonsG->[{code:,waons:},{code:,waons:}]
-    for (let j = 0; j < waonGroup.waons.length; j++) {
-      createWaonArea({ onpuContainer: onpuContainer });
-      const items = onpuContainer.querySelectorAll(".onpuContainer-item");
-      const item = items[j];
-      const notes = waonGroup.waons[j].notes;
-      appendWaon(item, notes);
-    }
-    onpuSlide();
-  }
-
-  // スタート後にコードを描画
-  function loadTheCode(waonGroup: WaonGroup) {
-    const codeWrap = document.querySelector(".code");
-    for (let j = 0; j < waonGroup.waons.length; j++) {
-      const codeDiv = document.createElement("div");
-      codeDiv.classList.add("code-one");
-      codeDiv.innerHTML = waonGroup.waons[j].code;
-      codeWrap.append(codeDiv);
-    }
   }
 
   function scrollToCenter() {
     const rect = codeRef.current.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const position = rect.top + scrollTop;
+    const position = rect.top + scrollTop - 20;
     window.scrollTo(0, position);
   }
 
@@ -229,28 +189,98 @@ const Start: FC = () => {
             </div>
             <div className="userSetting-one">
               <div className="userSetting-one-label">カテゴリー</div>
-              <CategoryOption
-                disabled={false}
-                defaultLable="すべて"
-                selectRef={categorySelectRef}
-                onChange={categoryChange}
-              />
+              <CategoryOption disabled={false} defaultLable="すべて" setSelectedCateId={setSelectedCateId} />
             </div>
           </div>
-          <div className="code" ref={codeRef}></div>
+          <div className="code" ref={codeRef}>
+            {currentWaonGroup?.waons?.map((waon) => {
+              return (
+                <span key={waon.index} className="code-one">
+                  {waon.code}
+                </span>
+              );
+            })}
+          </div>
           <div className="gosenContainer">
             <div className="gosenContainer-gosen">
-              <img src="/img/gosen.svg" alt="" />
+              <Image src="/img/gosen.svg" alt="" fill />
             </div>
-            <div className="onpuContainer"></div>
+            <div className="onpuContainer" ref={onpuContainerRef}>
+              {currentWaonGroup?.waons?.map((waon) => {
+                return (
+                  <div key={waon.index} className="onpuContainer-item">
+                    <div className="onpuContainer-item-main">
+                      <div className="onpuContainer-item-main-parts is-righthand js-onpuslide">
+                        <div className="onpuTama">
+                          {waon.notes?.map((onpu, noteIndex) => {
+                            return (
+                              onpu.num <= 18 && (
+                                <span
+                                  key={onpu.num}
+                                  className={`onpuTama-one js-onpuslide-one ${onpu.sharp ? "is-sharp" : ""} ${
+                                    onpu.flat ? "is-flat" : ""
+                                  }`}
+                                  role="button"
+                                  tabIndex={noteIndex as number}
+                                  data-num={onpu.num}
+                                >
+                                  <Image src="/img/onpu.svg" alt="" fill />
+                                </span>
+                              )
+                            );
+                          })}
+                        </div>
+                        <div className="onpuLine">
+                          <span className="onpuLine-item is-top1"></span>
+                          <span className="onpuLine-item is-top2"></span>
+                          <span className="onpuLine-item is-bottom1"></span>
+                          <span className="onpuLine-item is-bottom2"></span>
+                        </div>
+                      </div>
+                      <div className="onpuContainer-item-main-parts is-lefthand js-onpuslide">
+                        <div className="onpuTama">
+                          {waon.notes?.map((onpu, noteIndex) => {
+                            return (
+                              onpu.num >= 19 && (
+                                <span
+                                  key={onpu.num}
+                                  className={`onpuTama-one js-onpuslide-one ${onpu.sharp ? "is-sharp" : ""} ${
+                                    onpu.flat ? "is-flat" : ""
+                                  }`}
+                                  role="button"
+                                  tabIndex={noteIndex as number}
+                                  data-num={onpu.num}
+                                >
+                                  <Image src="/img/onpu.svg" alt="" fill />
+                                </span>
+                              )
+                            );
+                          })}
+                        </div>
+                        <div className="onpuLine">
+                          <span className="onpuLine-item is-top1"></span>
+                          <span className="onpuLine-item is-top2"></span>
+                          <span className="onpuLine-item is-bottom1"></span>
+                          <span className="onpuLine-item is-bottom2"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
           <div className="startBtn">
-            <button id="startbtn" className="btn-big is-blue" onClick={play}>
-              スタート
-            </button>
-            <button id="stopbtn" className="btn-big is-green" onClick={stop}>
-              ストップ
-            </button>
+            {btnStartOrStop === "start" && (
+              <button id="startbtn" className="btn-big is-blue" onClick={play}>
+                スタート
+              </button>
+            )}
+            {btnStartOrStop === "stop" && (
+              <button id="stopbtn" className="btn-big is-green" onClick={stop}>
+                ストップ
+              </button>
+            )}
           </div>
         </div>
       </main>

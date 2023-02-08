@@ -1,10 +1,10 @@
 const msgShow = (msg, time) => {
-  const msgBox = document.querySelector('.msgBox');
+  const msgBox = document.querySelector(".msgBox");
   msgBox.innerHTML = msg;
-  msgBox.classList.add('is-show');
-  setTimeout(function(){
-    msgBox.classList.remove('is-show');
-  },time)
-}
+  msgBox.classList.add("is-show");
+  setTimeout(() => {
+    msgBox.classList.remove("is-show");
+  }, time);
+};
 
 module.exports = msgShow;
