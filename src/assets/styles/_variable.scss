@@ -63,6 +63,11 @@ $widthTab : 768px; //タブレット
   }
 }
 
+@mixin hover() {
+  @media (hover: hover) {
+    @content;
+  }
+}
 
 /* font */
 

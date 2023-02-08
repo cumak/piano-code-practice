@@ -1,22 +1,22 @@
-import { useEffect, FC, useState } from "react";
-import Head from "components/head";
-import Layout from "components/layout";
-import { auth } from "src/utils/firebase";
-import { useForm, useFieldArray } from "react-hook-form";
-
+import { Layout } from "components/layout";
+import { ModalNewGroup } from "components/modalNewGroup";
+import { onAuthStateChanged } from "firebase/auth";
+import type { Firestore } from "firebase/firestore";
 import {
-  getFirestore,
   collection,
   doc,
   getDocs,
-  getDoc,
+  getFirestore,
   updateDoc,
 } from "firebase/firestore";
-import type { Firestore } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { auth } from "src/utils/firebase";
+
 const db: Firestore = getFirestore();
 
-type formProps = {
+type FormProps = {
   category: {
     cateName: string;
     docId: string;
@@ -24,10 +24,8 @@ type formProps = {
 };
 
 const Category: FC = (props: any) => {
-  let [cateName, setCateName] = useState([]);
-  let [docIds, setDocIds] = useState([]);
-  let [targetId, setTargetId] = useState<string>("");
-  const { handleSubmit, setValue, register, control } = useForm<formProps>();
+  const [targetId, setTargetId] = useState<string>("");
+  const { handleSubmit, setValue, register, control } = useForm<FormProps>();
 
   const { fields, append, remove } = useFieldArray({
     name: "category",
@@ -35,33 +33,33 @@ const Category: FC = (props: any) => {
   });
 
   useEffect(() => {
-    let currentUser;
-    // ユーザーをここでチェックしないと、doc(currentUser.email)がnullになる
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        currentUser = auth.currentUser;
         getCate();
       }
     });
-    async function getCate() {
-      const categoryDocs = await getDocs(
-        collection(db, "user", currentUser.email, "category")
-      );
-      const forSetValue = [];
-      categoryDocs.forEach((doc) => {
-        const data = doc.data();
-        cateName = [...cateName, data.name];
-        docIds = [...docIds, doc.id];
-        forSetValue.push({ cateName: data.name, docId: doc.id });
-      });
-      setCateName(cateName);
-      setDocIds(docIds);
-      setValue("category", forSetValue);
-    }
   }, []);
 
+  async function getCate() {
+    const categoryDocs = await getDocs(
+      collection(db, "user", auth.currentUser.email, "category")
+    );
+    const forSetValue = [];
+    categoryDocs.forEach((doc) => {
+      const data = doc.data();
+      forSetValue.push({ cateName: data.name, docId: doc.id });
+    });
+    setValue("category", forSetValue);
+  }
+
+  function cateListRefresh() {
+    getCate();
+  }
+
   async function onSubmit(data) {
-    const cateObj = data.category.find((cate) => cate.docId === targetId);
+    const cateObj = data.category.find((cate) => {
+      return cate.docId === targetId;
+    });
     await updateDoc(
       doc(db, "user", auth.currentUser.email, "category", targetId),
       {
@@ -73,10 +71,20 @@ const Category: FC = (props: any) => {
 
   return (
     <Layout>
-      <Head title={"カテゴリー|コード練習アプリ"} />
       <main className="main">
         <div className="mainWrapper">
-          <h1 className="title-m">カテゴリー</h1>
+          <div className="titleArea">
+            <h1 className="title-m">カテゴリー</h1>
+            <div className="titleArea-r">
+              <button
+                type="button"
+                className="btn-s is-blue"
+                data-micromodal-trigger="modal-1"
+              >
+                新規作成
+              </button>
+            </div>
+          </div>
           <form className="categoryArea" onSubmit={handleSubmit(onSubmit)}>
             {fields.map((fields, index) => {
               return (
@@ -94,7 +102,9 @@ const Category: FC = (props: any) => {
                     className="categorySection-submit btn-s is-orange"
                     type="submit"
                     value="カテゴリ名更新"
-                    onClick={() => setTargetId(fields.docId)}
+                    onClick={() => {
+                      return setTargetId(fields.docId);
+                    }}
                   />
                 </div>
               );
@@ -102,6 +112,7 @@ const Category: FC = (props: any) => {
           </form>
         </div>
       </main>
+      <ModalNewGroup callbackAfterCreate={cateListRefresh} />
     </Layout>
   );
 };

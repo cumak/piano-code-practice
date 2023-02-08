@@ -1,9 +1,9 @@
 // import Head from 'next/head'
 import Head from "components/head";
-import Layout from "components/layout";
-import { onpuSlide } from "assets/js/OnpuSlide";
+import { Layout } from "components/layout";
+import { onpuSlide } from "@/assets/js/OnpuSlide";
 import * as Tone from "tone";
-import toneData from "assets/js/toneData";
+import toneData from "@/assets/js/toneData";
 import React, { useEffect } from "react";
 
 export default function Add() {

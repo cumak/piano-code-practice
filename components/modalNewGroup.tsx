@@ -1,11 +1,17 @@
-import { useEffect, FC } from "react";
-import MicroModal from "micromodal";
-import { auth } from "src/utils/firebase";
-import { getFirestore, addDoc, collection } from "firebase/firestore";
 import type { Firestore } from "firebase/firestore";
+import { addDoc, collection, getFirestore } from "firebase/firestore";
+import MicroModal from "micromodal";
+import type { FC } from "react";
+import { useEffect } from "react";
+import { auth } from "src/utils/firebase";
+
 const db: Firestore = getFirestore();
 
-const modalNewGroup: FC = (props: any) => {
+type Props = {
+  callbackAfterCreate?: () => void;
+};
+
+export const ModalNewGroup: FC<Props> = ({ callbackAfterCreate }) => {
   useEffect(() => {
     MicroModal.init({
       disableScroll: true,
@@ -24,6 +30,7 @@ const modalNewGroup: FC = (props: any) => {
     }).then(() => {
       alert("カテゴリーを追加しました");
       MicroModal.close("modal-1");
+      callbackAfterCreate && callbackAfterCreate();
     });
   }
 
@@ -69,5 +76,3 @@ const modalNewGroup: FC = (props: any) => {
     </div>
   );
 };
-
-export default modalNewGroup;

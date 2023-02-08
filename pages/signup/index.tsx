@@ -1,9 +1,11 @@
-import { FC, useState } from "react";
-import { useRouter } from "next/router";
-import Layout from "components/layout";
-import { auth } from "src/utils/firebase";
+import { Layout } from "components/layout";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import firebaseError from "assets/js/errMsg";
+import { useRouter } from "next/router";
+import type { FC } from "react";
+import { useState } from "react";
+import { auth } from "src/utils/firebase";
+
+import firebaseError from "@/assets/js/errMsg";
 
 const SignUp: FC = () => {
   // useRouterでrouterオブジェクトを取得
@@ -35,7 +37,9 @@ const SignUp: FC = () => {
                 <span className="formItem-input">
                   <input
                     type="email"
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      return setEmail(e.target.value);
+                    }}
                   />
                 </span>
               </label>
@@ -44,7 +48,9 @@ const SignUp: FC = () => {
                 <span className="formItem-input">
                   <input
                     type="password"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      return setPassword(e.target.value);
+                    }}
                   />
                 </span>
               </label>

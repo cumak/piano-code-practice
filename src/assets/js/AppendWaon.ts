@@ -2,10 +2,10 @@ import toneData from "./toneData";
 
 /* itemエリアに和音を追加する  */
 export const appendWaon = (item, notes) => {
-  let onpuTamaRight = item.querySelector(".is-righthand .onpuTama");
-  let onpuTamaLeft = item.querySelector(".is-lefthand .onpuTama");
+  const onpuTamaRight = item.querySelector(".is-righthand .onpuTama");
+  const onpuTamaLeft = item.querySelector(".is-lefthand .onpuTama");
 
-  notes.sort(function (a, b) {
+  notes.sort((a, b) => {
     return a - b;
   });
   notes.forEach((note) => {

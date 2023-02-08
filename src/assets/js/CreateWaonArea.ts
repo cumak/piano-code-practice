@@ -2,6 +2,7 @@
 // 「Mypage」で登録している和音をロードする時
 
 import * as Tone from "tone";
+
 import toneData from "./toneData";
 
 // addEdit＝>和音を選択できるようにする

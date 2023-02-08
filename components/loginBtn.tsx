@@ -1,10 +1,11 @@
-import * as React from "react";
-import { useEffect, FC, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import type { FC } from "react";
+import * as React from "react";
+import { useEffect, useState } from "react";
 import { auth } from "src/utils/firebase";
 
-const loginBtn: FC = (props: any) => {
+export const LoginBtn: FC = (props: any) => {
   const router = useRouter();
 
   const logOut = async () => {
@@ -19,9 +20,9 @@ const loginBtn: FC = (props: any) => {
   return (
     <>
       {auth.currentUser ? (
-        <span className="btn-s is-orange" onClick={logOut}>
+        <button className="btn-s is-orange" onClick={logOut}>
           ログアウト
-        </span>
+        </button>
       ) : (
         <Link className="btn-s is-orange" href="/login/">
           ログイン
@@ -30,5 +31,3 @@ const loginBtn: FC = (props: any) => {
     </>
   );
 };
-
-export default loginBtn;

@@ -1,21 +1,19 @@
-import { useEffect, FC, useState, useRef } from "react";
-import { useRouter } from "next/router";
-
-import Head from "components/head";
-import Layout from "components/layout";
+import { CategoryOption } from "components/categoryOption";
+import { Layout } from "components/layout";
 import ToggleBtn from "components/togglebtn";
-import { onpuSlide } from "assets/js/OnpuSlide";
-import { createWaonArea } from "assets/js/CreateWaonArea";
-import { appendWaon } from "assets/js/AppendWaon";
-import msgBox from "assets/js/MsgBox";
-import { getWaonGroupDataWithId } from "assets/js/GetFromDB";
-import type { GetWaonGroupDataWithId, WaonGroup } from "assets/js/GetFromDB";
-import CategoryOption from "components/categoryOption";
-
+import { useRouter } from "next/router";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
 import { auth } from "src/utils/firebase";
-import "firebase/firestore";
 
-const Start: FC = (props: any) => {
+import { appendWaon } from "@/assets/js/AppendWaon";
+import { createWaonArea } from "@/assets/js/CreateWaonArea";
+import type { GetWaonGroupDataWithId, WaonGroup } from "@/assets/js/GetFromDB";
+import { getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
+import msgBox from "@/assets/js/MsgBox";
+import { onpuSlide } from "@/assets/js/OnpuSlide";
+
+const Start: FC = () => {
   const router = useRouter();
   let timer, qaTimer;
 
@@ -85,7 +83,7 @@ const Start: FC = (props: any) => {
     // メッセージをだす
     msgBox("Start!", 1000);
 
-    timer = setInterval(function () {
+    timer = setInterval(() => {
       start(qTime);
     }, allTime);
 
@@ -95,14 +93,14 @@ const Start: FC = (props: any) => {
       containerReset();
       const waonGroup = waonsArr[i].waonGroupData as WaonGroup;
       loadTheCode(waonGroup);
-      qaTimer = setTimeout(function () {
+      qaTimer = setTimeout(() => {
         loadTheWaon(waonGroup);
         i++;
         // 最後のループ
         if (i === waonsArr.length) {
           clearInterval(timer);
           clearInterval(qaTimer);
-          setTimeout(function () {
+          setTimeout(() => {
             stop();
           }, qTime);
         }
@@ -200,7 +198,6 @@ const Start: FC = (props: any) => {
 
   return (
     <Layout>
-      <Head title={"コード練習アプリ"} />
       <main className="main startPage">
         <div className="mainWrapper">
           <div className="userSetting">
@@ -248,12 +245,12 @@ const Start: FC = (props: any) => {
             <div className="onpuContainer"></div>
           </div>
           <div className="startBtn">
-            <span id="startbtn" className="btn-big is-blue" onClick={play}>
+            <button id="startbtn" className="btn-big is-blue" onClick={play}>
               スタート
-            </span>
-            <span id="stopbtn" className="btn-big is-green" onClick={stop}>
+            </button>
+            <button id="stopbtn" className="btn-big is-green" onClick={stop}>
               ストップ
-            </span>
+            </button>
           </div>
         </div>
       </main>

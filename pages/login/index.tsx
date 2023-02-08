@@ -1,9 +1,11 @@
-import { useEffect, useState, FC } from "react";
-import { useRouter } from "next/router";
-import Layout from "components/layout";
-import { auth } from "src/utils/firebase";
-import firebaseError from "assets/js/errMsg";
+import { Layout } from "components/layout";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/router";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
+import { auth } from "src/utils/firebase";
+
+import firebaseError from "@/assets/js/errMsg";
 
 const Login: FC = () => {
   const router = useRouter();
@@ -38,7 +40,9 @@ const Login: FC = () => {
                   <input
                     type="email"
                     name="email"
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      return setEmail(e.target.value);
+                    }}
                   />
                 </span>
               </label>
@@ -47,7 +51,9 @@ const Login: FC = () => {
                 <span className="formItem-input">
                   <input
                     type="password"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      return setPassword(e.target.value);
+                    }}
                   />
                 </span>
               </label>

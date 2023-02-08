@@ -1,6 +1,7 @@
-import { FC } from "react";
-import Layout from "../components/layout";
 import Link from "next/link";
+import type { FC } from "react";
+
+import { Layout } from "../components/layout";
 
 const Home: FC = (props: any) => {
   return (
@@ -20,7 +21,7 @@ const Home: FC = (props: any) => {
             </div>
             <div className="openBtn">
               <Link className="btn-big is-green" href="/start/">
-                Let's START!
+                START!
               </Link>
             </div>
           </div>

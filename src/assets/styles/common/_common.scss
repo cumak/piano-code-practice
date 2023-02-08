@@ -33,3 +33,12 @@ main{
 		transform: translateY(0);
 	}
 }
+
+.titleArea{
+	position: relative;
+	&-r{
+		position: absolute;
+		right: 0;
+		bottom: 5px;
+	}
+}

@@ -1,16 +1,18 @@
-import React, { useEffect, useState, FC } from "react";
-import { useRouter } from "next/router";
-import Layout from "components/layout";
-import { auth } from "src/utils/firebase";
-import { createWaonArea } from "assets/js/CreateWaonArea";
-import { appendWaon } from "assets/js/AppendWaon";
-import { onpuSlide } from "assets/js/OnpuSlide";
-import { getWaonGroupDataWithId } from "assets/js/GetFromDB";
-import type { GetWaonGroupDataWithId } from "assets/js/GetFromDB";
 import { getAllCate } from "components/categoryOption";
-
-import { getFirestore, doc, deleteDoc } from "firebase/firestore";
+import { Layout } from "components/layout";
 import type { Firestore } from "firebase/firestore";
+import { deleteDoc, doc, getFirestore } from "firebase/firestore";
+import { useRouter } from "next/router";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
+import { auth } from "src/utils/firebase";
+
+import { appendWaon } from "@/assets/js/AppendWaon";
+import { createWaonArea } from "@/assets/js/CreateWaonArea";
+import type { GetWaonGroupDataWithId } from "@/assets/js/GetFromDB";
+import { getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
+import { onpuSlide } from "@/assets/js/OnpuSlide";
+
 const db: Firestore = getFirestore();
 
 const Mypage: FC = () => {
@@ -37,8 +39,8 @@ const Mypage: FC = () => {
   async function myWaonLoad() {
     for (let i = 0; i < waonGroupDataWithId.length; i++) {
       // 和音グループの数だけ5線を出力
-      let waonGroupData = waonGroupDataWithId[i].waonGroupData;
-      let waonGid = waonGroupDataWithId[i].waonGid;
+      const waonGroupData = waonGroupDataWithId[i].waonGroupData;
+      const waonGid = waonGroupDataWithId[i].waonGid;
       const categoryId = waonGroupDataWithId[i].waonGroupData.category;
 
       const allCate = await getAllCate();

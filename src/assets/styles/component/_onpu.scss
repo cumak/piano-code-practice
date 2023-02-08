@@ -3,6 +3,9 @@
 	&-inner{
 		position: relative;
 	}
+	&-gosen{
+		aspect-ratio: 2.146;
+	}
 }
 
 .onpuContainer{
@@ -106,6 +109,7 @@
 		position: absolute;
 		width:  100%;
 		pointer-events: all;
+		aspect-ratio: 1.226;
 		// 右手パート
 		@for $i from 0 through 18{
 			&[data-num="#{$i}"]{

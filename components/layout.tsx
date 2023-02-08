@@ -1,10 +1,10 @@
+import { LoginBtn } from "components/loginBtn";
 import Link from "next/link";
-import LoginBtn from "components/loginBtn";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { auth } from "src/utils/firebase";
 
-export default function Layout({ children }) {
+export function Layout({ children }) {
   const router = useRouter();
   const pathname = router.pathname;
   const [currentUser, setCurrentUser] = useState(null);

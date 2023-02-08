@@ -1,8 +1,9 @@
-import { useEffect, FC, useState } from "react";
-import "src/utils/firebase";
-import { auth } from "src/utils/firebase";
-import { getFirestore, getDocs, collection } from "firebase/firestore";
 import type { Firestore } from "firebase/firestore";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
+import { auth } from "src/utils/firebase";
+
 const db: Firestore = getFirestore();
 
 type Props = {
@@ -31,7 +32,7 @@ export async function getAllCate() {
   return dispData;
 }
 
-const cateogoryOption: FC<Props> = ({
+export const CategoryOption: FC<Props> = ({
   disabled = true,
   defaultLable = "選択してください",
   selectRef,
@@ -66,5 +67,3 @@ const cateogoryOption: FC<Props> = ({
     </select>
   );
 };
-
-export default cateogoryOption;
