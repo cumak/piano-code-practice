@@ -36,33 +36,39 @@ export type GetAllCate = {
   docId: string;
 }[];
 
-export const getWaonGroupDataWithId = async () => {
-  const userWaonGroupField: GetWaonGroupDataWithId = [];
-  auth.onAuthStateChanged(async (user) => {
-    const wgRef = collection(db, "user", user.email, "waonGroup");
-    const sortedWgRef = query(wgRef, orderBy("createdAt", "asc"));
-    const wg = await getDocs(sortedWgRef);
-    for (let i = 0; i < wg.docs.length; i++) {
-      userWaonGroupField[i] = {
-        waonGid: wg.docs[i].id, //IDも配列に加える
-        waonGroupData: wg.docs[i].data(),
-      };
-    }
+export const getWaonGroupDataWithId = async (): Promise<GetWaonGroupDataWithId> => {
+  return new Promise((resolve) => {
+    auth.onAuthStateChanged(async (user) => {
+      const userWaonGroupField: GetWaonGroupDataWithId = [];
+      const wgRef = collection(db, "user", user.email, "waonGroup");
+      const sortedWgRef = query(wgRef, orderBy("createdAt", "asc"));
+      const wg = await getDocs(sortedWgRef);
+      for (let i = 0; i < wg.docs.length; i++) {
+        userWaonGroupField[i] = {
+          waonGid: wg.docs[i].id, //IDも配列に加える
+          waonGroupData: wg.docs[i].data(),
+        };
+      }
+      resolve(userWaonGroupField);
+    });
   });
-  return userWaonGroupField;
 };
 
-export async function getAllCate(currentUser): Promise<GetAllCate> {
-  if (!currentUser) {
-    return;
-  }
-  const categoryDocs = await getDocs(collection(db, "user", currentUser.email, "category"));
-  const dispData = categoryDocs.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      cateName: data.name,
-      docId: doc.id,
-    };
+export async function getAllCate(): Promise<GetAllCate> {
+  return new Promise((resolve) => {
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        return;
+      }
+      const categoryDocs = await getDocs(collection(db, "user", user.email, "category"));
+      const dispData = categoryDocs.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          cateName: data.name,
+          docId: doc.id,
+        };
+      });
+      resolve(dispData);
+    });
   });
-  return dispData;
 }

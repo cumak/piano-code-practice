@@ -1,6 +1,5 @@
 import type { FC } from "react";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "src/auth/AuthProvider";
+import { useEffect, useState } from "react";
 
 import { getAllCate } from "@/assets/js/GetFromDB";
 
@@ -18,11 +17,10 @@ export const CategoryOption: FC<Props> = ({
   setSelectedCateId,
 }) => {
   const [cateData, setCateData] = useState([]);
-  const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
     (async () => {
-      const dispData = await getAllCate(currentUser);
+      const dispData = await getAllCate();
       setCateData(dispData);
       setSelectedCateId("default");
     })();

@@ -3,8 +3,7 @@ import { Layout } from "components/layout";
 import ToggleBtn from "components/togglebtn";
 import Image from "next/image";
 import type { FC } from "react";
-import { useContext, useEffect, useRef, useState } from "react";
-import { AuthContext } from "src/auth/AuthProvider";
+import { useEffect, useRef, useState } from "react";
 
 import type { GetWaonGroupDataWithId, WaonGroup } from "@/assets/js/GetFromDB";
 import { getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
@@ -12,8 +11,6 @@ import msgBox from "@/assets/js/MsgBox";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
 
 const Start: FC = () => {
-  const { currentUser } = useContext(AuthContext);
-
   const codeRef = useRef<HTMLDivElement>(null);
   const onpuContainerRef = useRef<HTMLDivElement>(null);
 

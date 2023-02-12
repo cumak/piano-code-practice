@@ -29,7 +29,7 @@ const Mypage: FC = () => {
       setWaonGroupDataWithId(data);
     })();
     (async () => {
-      const data = await getAllCate(currentUser);
+      const data = await getAllCate();
       data && setAllCate(data);
     })();
   }, [currentUser]);
