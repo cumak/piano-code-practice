@@ -99,7 +99,6 @@ const Start: FC = () => {
     function start(qTime) {
       codeRef.current.style.opacity = "1";
       onpuContainerRef.current.style.opacity = "0";
-      console.log("3", waonsArr);
       setCurrentWaonGroup(waonsArr[i].waonGroupData as WaonGroup);
       const qaTimer = setTimeout(() => {
         i++;

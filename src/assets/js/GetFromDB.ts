@@ -1,5 +1,5 @@
 import type { DocumentData, Firestore } from "firebase/firestore";
-import { collection, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
 
 const db: Firestore = getFirestore();
 import { auth } from "@/utils/firebase";
@@ -69,6 +69,22 @@ export async function getAllCate(): Promise<GetAllCate> {
         };
       });
       resolve(dispData);
+    });
+  });
+}
+
+export async function deleteCate(cateId) {
+  if (!cateId) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        return;
+      }
+      deleteDoc(doc(db, "user", user.email, "category", cateId)).then((data) => {
+        resolve(data);
+      });
     });
   });
 }

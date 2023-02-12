@@ -42,7 +42,11 @@ const Mypage: FC = () => {
     const cate = allCate?.find((cate) => {
       return cate.docId === cateId;
     });
-    return cate?.cateName;
+    if (cate?.cateName) {
+      return cate?.cateName;
+    } else {
+      return "未設定";
+    }
   }
 
   // 削除ボタン

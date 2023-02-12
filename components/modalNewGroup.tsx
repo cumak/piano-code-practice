@@ -37,38 +37,20 @@ export const ModalNewGroup: FC<Props> = ({ callbackAfterCreate }) => {
   return (
     <div id="modal-1" aria-hidden="true" className="modal micromodal-slide">
       <div tabIndex={-1} className="modal__overlay">
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-1-title"
-          className="modal__container"
-        >
+        <div role="dialog" aria-modal="true" aria-labelledby="modal-1-title" className="modal__container">
           <section className="modalContents newGroupAdd">
             <h2 className="newGroupAdd-title">新しいカテゴリーを追加</h2>
             <p>カテゴリー名を入れてください。</p>
             <div className="newGroupAdd-inputArea">
-              <input
-                id="newGroupName"
-                className="newGroupAdd-inputArea-input"
-                type="text"
-              />
+              <input id="newGroupName" className="newGroupAdd-inputArea-input" type="text" />
             </div>
           </section>
           <div className="modalBtn">
-            <button
-              className="btn-grad is-blue"
-              aria-label="登録する"
-              type="button"
-              onClick={addCategory}
-            >
+            <button className="btn-grad is-blue" aria-label="登録する" type="button" onClick={addCategory}>
               新規作成
             </button>
           </div>
-          <button
-            className="modalBtn-close btn-s"
-            aria-label="モーダルを閉じる"
-            data-micromodal-close
-          >
+          <button className="modalBtn-close btn-s" aria-label="モーダルを閉じる" data-micromodal-close>
             ×
           </button>
         </div>

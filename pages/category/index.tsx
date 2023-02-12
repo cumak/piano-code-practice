@@ -2,11 +2,13 @@ import { Layout } from "components/layout";
 import { ModalNewGroup } from "components/modalNewGroup";
 import { onAuthStateChanged } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
-import { collection, doc, getDocs, getFirestore, updateDoc } from "firebase/firestore";
+import { doc, getFirestore, updateDoc } from "firebase/firestore";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { auth } from "src/utils/firebase";
+
+import { deleteCate, getAllCate } from "@/assets/js/GetFromDB";
 
 const db: Firestore = getFirestore();
 
@@ -35,17 +37,23 @@ const Category: FC = (props: any) => {
   }, []);
 
   async function getCate() {
-    const categoryDocs = await getDocs(collection(db, "user", auth.currentUser.email, "category"));
-    const forSetValue = [];
-    categoryDocs.forEach((doc) => {
-      const data = doc.data();
-      forSetValue.push({ cateName: data.name, docId: doc.id });
-    });
-    setValue("category", forSetValue);
+    const cate = await getAllCate();
+    setValue("category", cate);
   }
 
-  function cateListRefresh() {
-    getCate();
+  async function deleteCategory(id) {
+    if (window.confirm("削除しますか？")) {
+      await deleteCate(id)
+        .then(() => {
+          alert("カテゴリーを削除しました");
+          getCate();
+        })
+        .catch((err) => {
+          alert("カテゴリーを削除できませんでした");
+          console.error(err);
+          return;
+        });
+    }
   }
 
   async function onSubmit(data) {
@@ -89,13 +97,22 @@ const Category: FC = (props: any) => {
                       return setTargetId(fields.docId);
                     }}
                   />
+                  <button
+                    className="categorySection-trash"
+                    type="button"
+                    onClick={() => {
+                      deleteCategory(fields.docId);
+                    }}
+                  >
+                    <img src="/img/icon-trash.svg" alt="" />
+                  </button>
                 </div>
               );
             })}
           </form>
         </div>
       </main>
-      <ModalNewGroup callbackAfterCreate={cateListRefresh} />
+      <ModalNewGroup callbackAfterCreate={getCate} />
     </Layout>
   );
 };

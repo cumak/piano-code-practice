@@ -1,8 +1,26 @@
+@use '../variable' as *;
+
 .categorySection{
+  display: flex;
   & + &{
     margin-top: 10px;
   }
   &-name{
     margin-right: 10px;
+  }
+  &-trash{
+    width: 60px;
+    display: inline-block;
+    margin-left: 10px;
+    border: 1px solid #979797;
+    border-radius: 3px;
+    background: $bgColor;
+    cursor: pointer;
+    transition: all .2s;
+    @include hover{
+      &:hover{
+        background: #e1f0f6;
+      }
+    }
   }
 }
