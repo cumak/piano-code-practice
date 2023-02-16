@@ -16,7 +16,7 @@ const config = {
 const app = initializeApp(config);
 
 const auth = getAuth(app);
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, () => {
   // console.log(user);
 });
 export { auth };

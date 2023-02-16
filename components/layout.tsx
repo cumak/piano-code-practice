@@ -1,4 +1,5 @@
 import { LoginBtn } from "components/LoginBtn";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
@@ -31,7 +32,7 @@ export function Layout({ children }) {
         <header className="header">
           <div className="logo">
             <Link className="logo-img" href="/">
-              <img src="/img/logo.svg" alt="ロゴ" />
+              <Image src="/img/logo.svg" fill alt="ロゴ" />
             </Link>
           </div>
           <div className="header-info">

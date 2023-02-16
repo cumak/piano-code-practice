@@ -1,9 +1,8 @@
+import { Layout } from "components/Layout";
 import Link from "next/link";
 import type { FC } from "react";
 
-import { Layout } from "../components/Layout";
-
-const Home: FC = (props: any) => {
+const Home: FC = () => {
   return (
     <Layout>
       <main className="main">

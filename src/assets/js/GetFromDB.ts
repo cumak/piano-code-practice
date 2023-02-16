@@ -1,5 +1,5 @@
 import type { DocumentData, Firestore } from "firebase/firestore";
-import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
 
 const db: Firestore = getFirestore();
 import { auth } from "@/utils/firebase";
@@ -17,9 +17,9 @@ export type WaonGroup = {
 };
 
 // categoryなどを含まない和音だけの配列
-export type Waons = theWaon[];
+export type Waons = TheWaon[];
 
-export type theWaon =
+export type TheWaon =
   | {
       code: string;
       index: number;

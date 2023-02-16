@@ -11,10 +11,7 @@ module.exports = {
   ],
   rules: {
     "no-console": ["warn", { allow: ["warn", "info", "error"] }],
-    "no-restricted-syntax": [
-      "error",
-      { selector: "TSEnumDeclaration", message: "Don't declare enums" },
-    ],
+    "no-restricted-syntax": ["error", { selector: "TSEnumDeclaration", message: "Don't declare enums" }],
     "prefer-arrow-callback": "error",
     "prefer-const": "error",
     "arrow-body-style": ["error", "always"],
@@ -28,7 +25,7 @@ module.exports = {
     "react/jsx-handler-names": "off",
     "react/destructuring-assignment": ["error", "always"],
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/exhaustive-deps": "off",
     "import/newline-after-import": "error",
     "import/no-default-export": "error",
     "import/no-duplicates": "error",
@@ -38,14 +35,8 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/consistent-type-imports": [
-      "warn",
-      { prefer: "type-imports" },
-    ],
-    "@typescript-eslint/no-unused-vars": [
-      "warn",
-      { varsIgnorePattern: "^_", argsIgnorePattern: "^_" },
-    ],
+    "@typescript-eslint/consistent-type-imports": ["warn", { prefer: "type-imports" }],
+    "@typescript-eslint/no-unused-vars": ["warn", { varsIgnorePattern: "^_", argsIgnorePattern: "^_" }],
     "@typescript-eslint/naming-convention": [
       "warn",
       { selector: ["typeAlias", "typeParameter"], format: ["PascalCase"] },
@@ -70,12 +61,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: [
-        "pages/index.tsx",
-        "pages/**/*/*.tsx",
-        "pages/_app.tsx",
-        "pages/_document.tsx",
-      ],
+      files: ["pages/index.tsx", "pages/**/*/*.tsx", "pages/_app.tsx", "pages/_document.tsx"],
       rules: {
         "import/no-default-export": "off",
         "@typescript-eslint/naming-convention": [

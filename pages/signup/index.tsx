@@ -5,7 +5,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import { auth } from "src/utils/firebase";
 
-import firebaseError from "@/assets/js/errMsg";
+import { firebaseError } from "@/assets/js/firebaseError";
 
 const SignUp: FC = () => {
   // useRouterでrouterオブジェクトを取得

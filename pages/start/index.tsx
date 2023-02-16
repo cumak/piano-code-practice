@@ -1,6 +1,6 @@
 import { CategoryOption } from "components/CategoryOption";
 import { Layout } from "components/Layout";
-import { ToggleBtn } from "components/ToggleBtn";
+import { ToggleBtn } from "components/Togglebtn";
 import Image from "next/image";
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";

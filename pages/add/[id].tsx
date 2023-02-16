@@ -12,7 +12,7 @@ import { auth } from "@/utils/firebase";
 
 const db: Firestore = getFirestore();
 
-const Id: FC = (props: any) => {
+const Id: FC = () => {
   const [data, setData] = useState<WaonGroup>();
   const [fetchedWGProps, setFetchedWGProps] = useState<FetchedWGProps>();
 

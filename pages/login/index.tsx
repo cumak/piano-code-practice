@@ -5,7 +5,7 @@ import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { auth } from "src/utils/firebase";
 
-import firebaseError from "@/assets/js/errMsg";
+import { firebaseError } from "@/assets/js/firebaseError";
 
 const Login: FC = () => {
   const router = useRouter();

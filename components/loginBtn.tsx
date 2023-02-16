@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import type { FC } from "react";
 import { auth } from "src/utils/firebase";
 
-export const LoginBtn: FC = (props: any) => {
+export const LoginBtn: FC = () => {
   const router = useRouter();
 
   const logOut = async () => {

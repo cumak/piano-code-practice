@@ -36,7 +36,9 @@
 
 .logo{
   &-img{
+    position: relative;
     display: block;
     width: 100px;
+    aspect-ratio: 1.78;
   }
 }

@@ -115,7 +115,7 @@ const Mypage: FC = () => {
                     <div className="addMain">
                       <div className="addMain-inner">
                         <div className="addMain-gosen">
-                          <img src="/img/gosen-add.svg" alt="" />
+                          <Image src="/img/gosen-add.svg" fill alt="" />
                         </div>
                         <div className="onpuContainer">
                           {waonGroup.waonGroupData.waons.map((waon) => {
@@ -124,7 +124,7 @@ const Mypage: FC = () => {
                                 <div className="onpuContainer-item-main">
                                   <div className="onpuContainer-item-main-parts is-righthand js-onpuslide">
                                     <div className="onpuTama">
-                                      {waon.notes?.map((onpu, noteIndex) => {
+                                      {waon.notes?.map((onpu) => {
                                         return (
                                           onpu.num <= 18 && (
                                             <span

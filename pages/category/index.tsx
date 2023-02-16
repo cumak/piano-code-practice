@@ -3,6 +3,7 @@ import { ModalNewGroup } from "components/ModalNewGroup";
 import { onAuthStateChanged } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import { doc, getFirestore, updateDoc } from "firebase/firestore";
+import Image from "next/image";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -19,7 +20,7 @@ type FormProps = {
   }[];
 };
 
-const Category: FC = (props: any) => {
+const Category: FC = () => {
   const [targetId, setTargetId] = useState<string>("");
   const { handleSubmit, setValue, register, control } = useForm<FormProps>();
 
@@ -104,7 +105,7 @@ const Category: FC = (props: any) => {
                       deleteCategory(fields.docId);
                     }}
                   >
-                    <img src="/img/icon-trash.svg" alt="" />
+                    <Image src="/img/icon-trash.svg" alt="削除する" fill />
                   </button>
                 </div>
               );
