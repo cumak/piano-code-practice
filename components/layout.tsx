@@ -1,4 +1,4 @@
-import { LoginBtn } from "components/loginBtn";
+import { LoginBtn } from "components/LoginBtn";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";

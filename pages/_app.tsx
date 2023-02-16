@@ -10,10 +10,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>コード練習アプリ</title>
-        <meta
-          name="description"
-          content={"コードを登録して、スライドショーで流す単純なアプリです。"}
-        />
+        <meta name="description" content={"コードを登録して、スライドショーで流す単純なアプリです。"} />
         <link rel="shortcut icon" href={"/img/favicon.ico"} />
         <link rel="apple-touch-icon" href={"/img/apple-touch-icon.png"} />
       </Head>

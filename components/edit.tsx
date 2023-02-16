@@ -1,5 +1,5 @@
 import { CategoryOption } from "components/CategoryOption";
-import { ModalNewGroup } from "components/modalNewGroup";
+import { ModalNewGroup } from "components/ModalNewGroup";
 import type { Firestore } from "firebase/firestore";
 import { addDoc, collection, doc, getFirestore, serverTimestamp, updateDoc } from "firebase/firestore";
 import Image from "next/image";
@@ -78,6 +78,9 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
     }
     const newSelectedWaons = selectedWaons.map((selectedWaon) => {
       selectedWaon.isSelected = false;
+      selectedWaon.notes.forEach((note) => {
+        note.isSelected = false;
+      });
       return selectedWaon;
     });
     setSelectedWaons([
@@ -360,46 +363,48 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
                 <div className="selectOnpuContainer-item-main">
                   <div className="selectOnpuContainer-item-main-parts is-righthand">
                     <div className="selectOnpuTama">
-                      {ADD_ONPU_TOONKIGOU.map((onpu, index) => {
+                      {ADD_ONPU_TOONKIGOU.map((onpu) => {
                         return (
-                          <span
+                          <button
                             key={onpu.dataNum}
                             className="selectOnpuTama-one"
-                            role="button"
-                            tabIndex={index as number}
                             data-num={onpu.dataNum}
+                            type="button"
                             onClick={(e) => {
                               return onpuSelected(e.target);
                             }}
                             onKeyDown={(e) => {
-                              return onpuSelected(e.target);
+                              if (e.key === "Enter") {
+                                return onpuSelected(e.target);
+                              }
                             }}
                           >
                             <Image src="/img/onpu.svg" alt={onpu.onpuName} fill />
-                          </span>
+                          </button>
                         );
                       })}
                     </div>
                   </div>
                   <div className="selectOnpuContainer-item-main-parts is-lefthand">
                     <div className="selectOnpuTama">
-                      {ADD_ONPU_HEONKIGOU.map((onpu, index) => {
+                      {ADD_ONPU_HEONKIGOU.map((onpu) => {
                         return (
-                          <span
+                          <button
                             key={onpu.dataNum}
                             className="selectOnpuTama-one"
-                            role="button"
-                            tabIndex={index as number}
+                            type="button"
                             data-num={onpu.dataNum}
                             onClick={(e) => {
                               return onpuSelected(e.target);
                             }}
                             onKeyDown={(e) => {
-                              return onpuSelected(e.target);
+                              if (e.key === "Enter") {
+                                return onpuSelected(e.target);
+                              }
                             }}
                           >
                             <Image src="/img/onpu.svg" alt={onpu.onpuName} fill />
-                          </span>
+                          </button>
                         );
                       })}
                     </div>
@@ -420,11 +425,17 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
                     {selectedWaons.map((waon) => {
                       return (
                         <div key={waon.index} className={`onpuContainer-item ${waon.isSelected && "is-select"}`}>
-                          <button
-                            type="button"
+                          <div
+                            role="button"
+                            tabIndex={0}
                             className="onpuContainer-item-main"
                             onClick={() => {
                               return selectToggleWaonArea(waon);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                return selectToggleWaonArea(waon);
+                              }
                             }}
                           >
                             <div className="onpuContainer-item-main-parts is-righthand js-onpuslide">
@@ -432,26 +443,28 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
                                 {waon.notes?.map((onpu, noteIndex) => {
                                   return (
                                     onpu.num <= 18 && (
-                                      <span
+                                      <button
                                         key={onpu.num}
+                                        type="button"
                                         className={`onpuTama-one js-onpuslide-one ${
                                           onpu.isSelected ? "is-select" : ""
                                         } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
-                                        role="button"
-                                        tabIndex={noteIndex as number}
+                                        tabIndex={0}
                                         data-num={onpu.num}
                                         onClick={(e) => {
                                           toggleNoteSelect(e, noteIndex, waon);
                                         }}
                                         onKeyDown={(e) => {
-                                          toggleNoteSelect(e, noteIndex, waon);
                                           if (e.key === "Backspace") {
                                             eraseOnpu();
+                                          }
+                                          if (e.key === "Enter") {
+                                            toggleNoteSelect(e, noteIndex, waon);
                                           }
                                         }}
                                       >
                                         <Image src="/img/onpu.svg" alt="" fill />
-                                      </span>
+                                      </button>
                                     )
                                   );
                                 })}
@@ -468,26 +481,28 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
                                 {waon.notes?.map((onpu, noteIndex) => {
                                   return (
                                     onpu.num >= 19 && (
-                                      <span
+                                      <button
                                         key={onpu.num}
+                                        type="button"
                                         className={`onpuTama-one js-onpuslide-one ${
                                           onpu.isSelected ? "is-select" : ""
                                         } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
-                                        role="button"
-                                        tabIndex={noteIndex as number}
+                                        tabIndex={0}
                                         data-num={onpu.num}
                                         onClick={(e) => {
                                           toggleNoteSelect(e, noteIndex, waon);
                                         }}
                                         onKeyDown={(e) => {
-                                          toggleNoteSelect(e, noteIndex, waon);
                                           if (e.key === "Backspace") {
                                             eraseOnpu();
+                                          }
+                                          if (e.key === "Enter") {
+                                            toggleNoteSelect(e, noteIndex, waon);
                                           }
                                         }}
                                       >
                                         <Image src="/img/onpu.svg" alt="" fill />
-                                      </span>
+                                      </button>
                                     )
                                   );
                                 })}
@@ -499,14 +514,14 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
                                 <span className="onpuLine-item is-bottom2"></span>
                               </div>
                             </div>
-                          </button>
+                          </div>
                           <div className="onpuContainer-item-opt">
-                            <div className="onpuContainer-item-opt-code">
-                              <input type="text" name="code" defaultValue={waon.code} />
-                            </div>
                             <button type="button" className="onpuContainer-item-opt-sound" onClick={playWaon}>
                               <span className="onpuContainer-item-opt-sound-btn">♪</span>
                             </button>
+                            <div className="onpuContainer-item-opt-code">
+                              <input type="text" name="code" defaultValue={waon.code} />
+                            </div>
                           </div>
                         </div>
                       );
@@ -529,37 +544,43 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
                   </button>
                 </div>
                 <div className="actionBtns-row is-kigou">
-                  <span
+                  <button
                     className="actionBtns-row-kigonBtn btn-grad is-gray"
-                    role="button"
-                    tabIndex={10 as number}
                     onClick={addSharp}
-                    onKeyDown={addSharp}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        addSharp;
+                      }
+                    }}
+                    type="button"
                   >
                     <span className="actionBtns-row-kigonBtn-imgWrap">
                       <Image src="/img/sharp.svg" alt="シャープ" fill />
                     </span>
-                  </span>
-                  <span
+                  </button>
+                  <button
                     className="actionBtns-row-kigonBtn btn-grad is-gray"
-                    role="button"
-                    tabIndex={11 as number}
                     onClick={addFlat}
-                    onKeyDown={addFlat}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        addFlat;
+                      }
+                    }}
+                    type="button"
                   >
                     <span className="actionBtns-row-kigonBtn-imgWrap">
                       <Image src="/img/flat.svg" alt="フラット" fill />
                     </span>
-                  </span>
+                  </button>
                 </div>
                 <div className="actionBtns-row is-group">
                   <section className="actionBtns-row-group">
                     <h2 className="actionBtns-row-group-title">カテゴリー</h2>
-                    <CategoryOption setSelectedCateId={setSelectedCateId} />
+                    <CategoryOption setSelectedCateId={setSelectedCateId} defaultId={selectedCateId} />
                     <div className="actionBtns-row-group-newBtn">
-                      <span className="btn-plus" data-micromodal-trigger="modal-1">
+                      <button className="btn-plus" data-micromodal-trigger="modal-1" type="button">
                         +
-                      </span>
+                      </button>
                     </div>
                   </section>
                 </div>
@@ -571,7 +592,11 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
           </div>
         </div>
       </form>
-      <ModalNewGroup />
+      <ModalNewGroup
+        callbackAfterCreate={(id) => {
+          return setSelectedCateId(id);
+        }}
+      />
     </main>
   );
 };

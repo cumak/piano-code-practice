@@ -112,11 +112,15 @@
 	width: 100%;
 	height: 100%;
 	&-one{
+		appearance: none;
 		display: block;
 		position: absolute;
 		width:  100%;
 		pointer-events: all;
 		aspect-ratio: 1.226;
+		padding: 0;
+		background: none;
+		border: none;
 		// 右手パート
 		@for $i from 0 through 18{
 			&[data-num="#{$i}"]{

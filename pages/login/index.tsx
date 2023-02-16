@@ -1,4 +1,4 @@
-import { Layout } from "components/layout";
+import { Layout } from "components/Layout";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/router";
 import type { FC } from "react";
@@ -58,11 +58,7 @@ const Login: FC = () => {
                 </span>
               </label>
               <div className="formBtn">
-                <button
-                  className="btn-s is-orange"
-                  type="button"
-                  onClick={logIn}
-                >
+                <button className="btn-s is-orange" type="button" onClick={logIn}>
                   ログイン
                 </button>
               </div>

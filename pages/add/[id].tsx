@@ -1,6 +1,6 @@
 import type { FetchedWGProps } from "components/Edit";
 import { Edit } from "components/Edit";
-import { Layout } from "components/layout";
+import { Layout } from "components/Layout";
 import { onAuthStateChanged } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
@@ -39,22 +39,16 @@ const Id: FC = (props: any) => {
 
   // 編集モードの時、対象の和音をロード
   async function loadEditTargetWaon(waonGroupId) {
-    const waonGroup = await getDoc(
-      doc(db, "user", auth.currentUser.email, "waonGroup", waonGroupId)
-    ).then((querySnapshot) => {
-      return querySnapshot.data() as WaonGroup;
-    });
+    const waonGroup = await getDoc(doc(db, "user", auth.currentUser.email, "waonGroup", waonGroupId)).then(
+      (querySnapshot) => {
+        return querySnapshot.data() as WaonGroup;
+      }
+    );
 
     setData(waonGroup);
   }
 
-  return (
-    <Layout>
-      {fetchedWGProps?.waonGroup && (
-        <Edit isEditMode fetchedWGProps={fetchedWGProps} />
-      )}
-    </Layout>
-  );
+  return <Layout>{fetchedWGProps?.waonGroup && <Edit isEditMode fetchedWGProps={fetchedWGProps} />}</Layout>;
 };
 
 export default Id;

@@ -1,4 +1,4 @@
-import { Layout } from "components/layout";
+import { Layout } from "components/Layout";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/router";
 import type { FC } from "react";

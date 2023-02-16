@@ -5,15 +5,17 @@ import { getAllCate } from "@/assets/js/GetFromDB";
 
 type Props = {
   disabled?: boolean;
-  defaultLable?: string;
+  firstLabel?: string;
   onChange?: () => void;
+  defaultId?: string;
   setSelectedCateId?: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export const CategoryOption: FC<Props> = ({
   disabled = false,
-  defaultLable = "選択してください",
+  firstLabel = "選択してください",
   onChange,
+  defaultId = "default",
   setSelectedCateId,
 }) => {
   const [cateData, setCateData] = useState([]);
@@ -22,9 +24,9 @@ export const CategoryOption: FC<Props> = ({
     (async () => {
       const dispData = await getAllCate();
       setCateData(dispData);
-      setSelectedCateId("default");
+      setSelectedCateId(defaultId);
     })();
-  }, []);
+  }, [defaultId]);
 
   function onChangeSelect(event) {
     onChange && onChange();
@@ -32,9 +34,9 @@ export const CategoryOption: FC<Props> = ({
   }
 
   return (
-    <select id="categorySelect" defaultValue={"default"} onChange={onChangeSelect}>
+    <select id="categorySelect" onChange={onChangeSelect} value={defaultId}>
       <option value="default" disabled={disabled}>
-        {defaultLable}
+        {firstLabel}
       </option>
       {cateData.map((name) => {
         return (

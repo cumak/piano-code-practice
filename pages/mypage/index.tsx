@@ -1,4 +1,4 @@
-import { Layout } from "components/layout";
+import { Layout } from "components/Layout";
 import type { Firestore } from "firebase/firestore";
 import { deleteDoc, doc, getFirestore } from "firebase/firestore";
 import Image from "next/image";
@@ -133,7 +133,6 @@ const Mypage: FC = () => {
                                                 onpu.isSelected ? "is-select" : ""
                                               } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
                                               role="button"
-                                              tabIndex={noteIndex as number}
                                               data-num={onpu.num}
                                             >
                                               <Image src="/img/onpu.svg" alt="" fill />
@@ -178,12 +177,10 @@ const Mypage: FC = () => {
                                   </div>
                                 </div>
                                 <div className="onpuContainer-item-opt">
-                                  <div className="onpuContainer-item-opt-code">
-                                    <input type="text" name="code" defaultValue={waon.code} />
-                                  </div>
                                   <button type="button" className="onpuContainer-item-opt-sound" onClick={playWaon}>
                                     <span className="onpuContainer-item-opt-sound-btn">♪</span>
                                   </button>
+                                  <div className="onpuContainer-item-opt-code">{waon.code}</div>
                                 </div>
                               </div>
                             );

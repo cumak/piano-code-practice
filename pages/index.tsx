@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { FC } from "react";
 
-import { Layout } from "../components/layout";
+import { Layout } from "../components/Layout";
 
 const Home: FC = (props: any) => {
   return (

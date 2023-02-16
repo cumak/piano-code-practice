@@ -8,7 +8,7 @@ import { auth } from "src/utils/firebase";
 const db: Firestore = getFirestore();
 
 type Props = {
-  callbackAfterCreate?: () => void;
+  callbackAfterCreate?: (string?) => void;
 };
 
 export const ModalNewGroup: FC<Props> = ({ callbackAfterCreate }) => {
@@ -27,10 +27,10 @@ export const ModalNewGroup: FC<Props> = ({ callbackAfterCreate }) => {
     const user = auth.currentUser;
     addDoc(collection(db, "user", user.email, "category"), {
       name: newGroupName,
-    }).then(() => {
+    }).then((e) => {
       alert("カテゴリーを追加しました");
       MicroModal.close("modal-1");
-      callbackAfterCreate && callbackAfterCreate();
+      callbackAfterCreate && callbackAfterCreate(e.id);
     });
   }
 

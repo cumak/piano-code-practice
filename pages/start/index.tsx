@@ -1,6 +1,6 @@
 import { CategoryOption } from "components/CategoryOption";
-import { Layout } from "components/layout";
-import ToggleBtn from "components/togglebtn";
+import { Layout } from "components/Layout";
+import { ToggleBtn } from "components/ToggleBtn";
 import Image from "next/image";
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
@@ -180,12 +180,17 @@ const Start: FC = () => {
             <div className="userSetting-one">
               <div className="userSetting-one-label">シャッフル</div>
               <div className="shuffleBtn">
-                <ToggleBtn propsFunc={setIsShuffle} />
+                <ToggleBtn action={setIsShuffle} />
               </div>
             </div>
             <div className="userSetting-one">
               <div className="userSetting-one-label">カテゴリー</div>
-              <CategoryOption disabled={false} defaultLable="すべて" setSelectedCateId={setSelectedCateId} />
+              <CategoryOption
+                disabled={false}
+                firstLabel="すべて"
+                setSelectedCateId={setSelectedCateId}
+                defaultId={selectedCateId}
+              />
             </div>
           </div>
           <div className="code" ref={codeRef}>

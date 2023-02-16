@@ -1,5 +1,5 @@
-import { Layout } from "components/layout";
-import { ModalNewGroup } from "components/modalNewGroup";
+import { Layout } from "components/Layout";
+import { ModalNewGroup } from "components/ModalNewGroup";
 import { onAuthStateChanged } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import { doc, getFirestore, updateDoc } from "firebase/firestore";

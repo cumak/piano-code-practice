@@ -1,14 +1,22 @@
-function toggleBtn(props) {
+import type { FC } from "react";
+
+type Props = {
+  action;
+};
+
+export const ToggleBtn: FC<Props> = ({ action }) => {
   const clickEvent = (e) => {
     const checkValue = e.target.checked;
-    props.propsFunc(checkValue);
+    action(checkValue);
     return;
   };
   return (
     <>
       <div className="mt-android">
         <input id="tgl" type="checkbox" onChange={clickEvent} />
-        <label htmlFor="tgl"></label>
+        <label htmlFor="tgl">
+          <input id="tgl" type="checkbox" />
+        </label>
       </div>
       <style jsx>
         {`
@@ -55,13 +63,7 @@ function toggleBtn(props) {
               width: 4em;
               height: 1.75em;
               border-radius: 0.875em;
-              background-image: linear-gradient(
-                to right,
-                #848484 0%,
-                #848484 50%,
-                #7cbcbf 50%,
-                #7cbcbf 100%
-              );
+              background-image: linear-gradient(to right, #848484 0%, #848484 50%, #7cbcbf 50%, #7cbcbf 100%);
               background-size: 8em 1.7em;
               transition: all 0.3s ease;
               &:before {
@@ -105,6 +107,4 @@ function toggleBtn(props) {
       </style>
     </>
   );
-}
-
-export default toggleBtn;
+};
