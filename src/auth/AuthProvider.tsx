@@ -2,7 +2,7 @@ import type { User } from "firebase/auth";
 import type { FC } from "react";
 import { createContext, useEffect, useState } from "react";
 
-import { auth } from "../utils/firebase";
+import { auth } from "@/utils/firebase";
 
 type AuthContextProps = {
   currentUser: User | null | undefined;
@@ -14,9 +14,7 @@ type Props = {
   children?: React.ReactNode;
 };
 const AuthProvider: FC<Props> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null | undefined>(
-    undefined
-  );
+  const [currentUser, setCurrentUser] = useState<User | null | undefined>(undefined);
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -24,11 +22,7 @@ const AuthProvider: FC<Props> = ({ children }) => {
     });
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ currentUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ currentUser }}>{children}</AuthContext.Provider>;
 };
 
 export { AuthContext, AuthProvider };

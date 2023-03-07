@@ -39,6 +39,9 @@ export type GetAllCate = {
 export const getWaonGroupDataWithId = async (): Promise<GetWaonGroupDataWithId> => {
   return new Promise((resolve) => {
     auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        return false;
+      }
       const userWaonGroupField: GetWaonGroupDataWithId = [];
       const wgRef = collection(db, "user", user.email, "waonGroup");
       const sortedWgRef = query(wgRef, orderBy("createdAt", "asc"));

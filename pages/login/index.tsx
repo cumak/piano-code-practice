@@ -1,11 +1,11 @@
-import { Layout } from "components/Layout";
+import { Layout } from "@components/Layout";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/router";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
-import { auth } from "src/utils/firebase";
 
 import { firebaseError } from "@/assets/js/firebaseError";
+import { auth } from "@/utils/firebase";
 
 const Login: FC = () => {
   const router = useRouter();

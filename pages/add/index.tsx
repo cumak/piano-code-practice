@@ -1,7 +1,7 @@
 import "firebase/firestore";
 
+import { Layout } from "@components/Layout";
 import { Edit } from "components/Edit";
-import { Layout } from "components/Layout";
 import type { FC } from "react";
 
 const Add: FC = () => {

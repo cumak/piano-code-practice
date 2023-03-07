@@ -13,6 +13,9 @@
       ],
       "@public/*": [
         "public/*"
+      ],
+      "@components/*": [
+        "components/*"
       ]
     },
     "allowJs": true,

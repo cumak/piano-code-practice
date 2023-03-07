@@ -1,4 +1,4 @@
-import { Layout } from "components/Layout";
+import { Layout } from "@components/Layout";
 import { ModalNewGroup } from "components/ModalNewGroup";
 import { onAuthStateChanged } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
@@ -7,9 +7,9 @@ import Image from "next/image";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { auth } from "src/utils/firebase";
 
 import { deleteCate, getAllCate } from "@/assets/js/GetFromDB";
+import { auth } from "@/utils/firebase";
 
 const db: Firestore = getFirestore();
 
@@ -105,7 +105,7 @@ const Category: FC = () => {
                       deleteCategory(fields.docId);
                     }}
                   >
-                    <Image src="/img/icon-trash.svg" alt="削除する" fill />
+                    <Image src="/img/icon-trash.svg" alt="削除する" width="30" height="35" />
                   </button>
                 </div>
               );

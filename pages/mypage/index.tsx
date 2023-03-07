@@ -1,4 +1,4 @@
-import { Layout } from "components/Layout";
+import { Layout } from "@components/Layout";
 import type { Firestore } from "firebase/firestore";
 import { deleteDoc, doc, getFirestore } from "firebase/firestore";
 import Image from "next/image";

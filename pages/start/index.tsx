@@ -1,5 +1,5 @@
+import { Layout } from "@components/Layout";
 import { CategoryOption } from "components/CategoryOption";
-import { Layout } from "components/Layout";
 import { ToggleBtn } from "components/Togglebtn";
 import Image from "next/image";
 import type { FC } from "react";
@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from "react";
 
 import type { GetWaonGroupDataWithId, WaonGroup } from "@/assets/js/GetFromDB";
 import { getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
-import msgBox from "@/assets/js/MsgBox";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
 
 const Start: FC = () => {
@@ -87,7 +86,7 @@ const Start: FC = () => {
 
     setbtnStartOrStop("stop");
     // メッセージをだす
-    msgBox("Start!", 1000);
+    msgShow("Start!", 1000);
 
     const timer = setInterval(() => {
       start(qTime);
@@ -97,6 +96,9 @@ const Start: FC = () => {
     start(qTime);
 
     function start(qTime) {
+      if (!codeRef.current) {
+        return false;
+      }
       codeRef.current.style.opacity = "1";
       onpuContainerRef.current.style.opacity = "0";
       setCurrentWaonGroup(waonsArr[i].waonGroupData as WaonGroup);
@@ -115,6 +117,15 @@ const Start: FC = () => {
       }, qTime);
       setQaTimer(qaTimer);
     }
+  }
+
+  function msgShow(msg, time) {
+    const msgBox = document.querySelector(".msgBox");
+    msgBox.innerHTML = msg;
+    msgBox.classList.add("is-show");
+    setTimeout(() => {
+      msgBox.classList.remove("is-show");
+    }, time);
   }
 
   function stop() {

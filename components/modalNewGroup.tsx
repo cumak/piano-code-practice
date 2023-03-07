@@ -3,7 +3,8 @@ import { addDoc, collection, getFirestore } from "firebase/firestore";
 import MicroModal from "micromodal";
 import type { FC } from "react";
 import { useEffect } from "react";
-import { auth } from "src/utils/firebase";
+
+import { auth } from "@/utils/firebase";
 
 const db: Firestore = getFirestore();
 

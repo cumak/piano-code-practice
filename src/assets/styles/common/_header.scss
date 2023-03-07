@@ -42,3 +42,51 @@
     aspect-ratio: 1.78;
   }
 }
+
+.headerAccount{
+  position: relative;
+  &-icon{
+    display: block;
+    width: 40px;
+    height: 40px;
+    img{
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+.headerAccountMenu{
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  opacity: 0;
+  transform: scaleY(.7);
+  transition: all .2s;
+  transform-origin: top;
+  &-item{
+    text-align: left;
+    height: 50px;
+    font-size: 1.6rem;
+    font-weight: bold;
+    & + &{
+      border-top: 1px solid #ccc;
+    }
+    &-link{
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 0 20px;
+      cursor: pointer;
+    }
+  }
+  &.is-show{
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}

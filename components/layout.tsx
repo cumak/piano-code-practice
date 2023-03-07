@@ -1,9 +1,10 @@
-import { LoginBtn } from "components/LoginBtn";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "src/auth/AuthProvider";
+
+import { AuthContext } from "@/auth/AuthProvider";
+import { auth } from "@/utils/firebase";
 
 export function Layout({ children }) {
   const router = useRouter();
@@ -26,6 +27,24 @@ export function Layout({ children }) {
     }
   }, [currentUser]);
 
+  const logOut = async () => {
+    try {
+      await auth.signOut();
+      router.push("/login");
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const toggleAccountMenu = () => {
+    const accountMenu = document.querySelector(".headerAccountMenu");
+    if (accountMenu.classList.contains("is-show")) {
+      accountMenu.classList.remove("is-show");
+    } else {
+      accountMenu.classList.add("is-show");
+    }
+  };
+
   return (
     isShowPage && (
       <div className="container">
@@ -37,34 +56,69 @@ export function Layout({ children }) {
           </div>
           <div className="header-info">
             <div className="header-info-btns">
-              <div className="header-info-btns-btn">
-                <Link className="btn-s is-blue" href="/start/">
-                  Play
-                </Link>
-              </div>
-              <div className="header-info-btns-btn">
-                <Link className="btn-s is-red" href="/category/">
-                  カテゴリー
-                </Link>
-              </div>
-              <div className="header-info-btns-btn">
-                <Link className="btn-s is-red" href="/mypage/">
-                  My 和音
-                </Link>
-              </div>
-              <div className="header-info-btns-btn">
-                <Link className="btn-s is-red" href="/add/">
-                  和音登録
-                </Link>
-              </div>
-              <div className="header-info-btns-btn">
-                <LoginBtn />
-              </div>
-              <div className="header-info-btns-btn">
-                <Link className="btn-s is-pink" href="/signup/">
-                  新規登録
-                </Link>
-              </div>
+              {currentUser && (
+                <>
+                  <div className="header-info-btns-btn">
+                    <Link className="btn-s is-blue" href="/start/">
+                      Play
+                    </Link>
+                  </div>
+                  <div className="header-info-btns-btn">
+                    <Link className="btn-s is-red" href="/category/">
+                      カテゴリー
+                    </Link>
+                  </div>
+                  <div className="header-info-btns-btn">
+                    <Link className="btn-s is-red" href="/mypage/">
+                      My 和音
+                    </Link>
+                  </div>
+                  <div className="header-info-btns-btn">
+                    <Link className="btn-s is-red" href="/add/">
+                      和音登録
+                    </Link>
+                  </div>
+                </>
+              )}
+              {currentUser ? (
+                <div className="header-info-btns-btn">
+                  <div className="headerAccount">
+                    <button className="headerAccount-icon" onClick={toggleAccountMenu}>
+                      <img src="/img/icon-user-circle.svg" alt="アカウント" />
+                    </button>
+                    <ul className="headerAccountMenu">
+                      <li className="headerAccountMenu-item">
+                        <span
+                          className="headerAccountMenu-item-link"
+                          role="button"
+                          tabIndex={0}
+                          onClick={logOut}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              return logOut;
+                            }
+                          }}
+                        >
+                          ログアウト
+                        </span>
+                      </li>
+                      <li className="headerAccountMenu-item">
+                        <span className="headerAccountMenu-item-link">
+                          <Link href="/signup/">新規登録</Link>
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="header-info-btns-btn">
+                    <Link className="btn-s is-pink" href="/signup/">
+                      新規登録
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </header>

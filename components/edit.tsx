@@ -6,12 +6,12 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
-import { auth } from "src/utils/firebase";
 
 import type { WaonGroup } from "@/assets/js/GetFromDB";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
 import { playWaon } from "@/assets/js/playWaon";
 import { ADD_ONPU_HEONKIGOU, ADD_ONPU_TOONKIGOU } from "@/constants";
+import { auth } from "@/utils/firebase";
 
 // Firestore のインスタンスを初期化
 const db: Firestore = getFirestore();
@@ -44,7 +44,7 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
   const router = useRouter();
   const routeId = router.query.id;
   const [selectedWaons, setSelectedWaons] = useState<SelectedWaon[]>([]);
-  const [selectedCateId, setSelectedCateId] = useState<string>();
+  const [selectedCateId, setSelectedCateId] = useState<string>(fetchedWGProps?.waonGroup?.category);
 
   useEffect(() => {
     if (isEditMode && fetchedWGProps?.waonGroup?.waons) {
