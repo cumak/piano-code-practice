@@ -72,7 +72,7 @@ const Start: FC = () => {
       return;
     }
     if (!waonsArr.length) {
-      alert("このカテゴリーの和音は登録されていません。");
+      alert("和音が登録されていません。");
       return;
     }
     const qEl = document.getElementById("qTime") as HTMLInputElement;
@@ -96,13 +96,16 @@ const Start: FC = () => {
     start(qTime, aTime);
 
     function start(qTime, aTime) {
-      if (!codeRef.current) {
+      if (!codeRef.current || !onpuContainerRef.current) {
         return false;
       }
       codeRef.current.style.opacity = "1";
       onpuContainerRef.current.style.opacity = "0";
       setCurrentWaonGroup(waonsArr[i].waonGroupData as WaonGroup);
       const qaTimer = setTimeout(() => {
+        if (!codeRef.current || !onpuContainerRef.current) {
+          return false;
+        }
         i++;
         onpuSlide();
         onpuContainerRef.current.style.opacity = "1";

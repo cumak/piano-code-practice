@@ -79,6 +79,7 @@ const Mypage: FC = () => {
       <main className="main">
         <div className="mainWrapper">
           <div className="wrapper">
+            {waonGroupDataWithId.length === 0 && <p>「和音登録」から和音を登録できます。</p>}
             <div className="myWaon">
               {waonGroupDataWithId.map((waonGroup) => {
                 return (

@@ -549,39 +549,48 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
                   <Image src="/img/icon-remove-onpu.svg" alt="音符削除" width="20" height="20" />
                   <span className="editBtns-item-label">音符削除</span>
                 </button>
+                <div className="editBtns-item is-culumn">
+                  <div className="editBtns-item-one">
+                    <button
+                      className="editBtns-item-one-kigouBtn"
+                      onClick={addSharp}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          addSharp;
+                        }
+                      }}
+                      type="button"
+                    >
+                      <span className="editBtns-item-one-kigouBtn-imgWrap">
+                        <Image src="/img/sharp.svg" alt="シャープ" fill />
+                      </span>
+                    </button>
+                  </div>
+                  <div className="editBtns-item-one">
+                    <button
+                      className="editBtns-item-one-kigouBtn"
+                      onClick={addFlat}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          addFlat;
+                        }
+                      }}
+                      type="button"
+                    >
+                      <span className="editBtns-item-one-kigouBtn-imgWrap">
+                        <Image src="/img/flat.svg" alt="フラット" fill />
+                      </span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="actionArea">
               <div className="actionBtns">
-                <div className="actionBtns-row is-kigou">
-                  <button
-                    className="actionBtns-row-kigonBtn btn-grad is-gray"
-                    onClick={addSharp}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        addSharp;
-                      }
-                    }}
-                    type="button"
-                  >
-                    <span className="actionBtns-row-kigonBtn-imgWrap">
-                      <Image src="/img/sharp.svg" alt="シャープ" fill />
-                    </span>
-                  </button>
-                  <button
-                    className="actionBtns-row-kigonBtn btn-grad is-gray"
-                    onClick={addFlat}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        addFlat;
-                      }
-                    }}
-                    type="button"
-                  >
-                    <span className="actionBtns-row-kigonBtn-imgWrap">
-                      <Image src="/img/flat.svg" alt="フラット" fill />
-                    </span>
-                  </button>
+                <div className="actionBtns-row">
+                  <div className="editDescription">
+                    <p>上段の音符をクリックして、和音を作ってください。</p>
+                  </div>
                 </div>
                 <div className="actionBtns-row is-group">
                   <section className="actionBtns-row-group">
