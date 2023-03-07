@@ -4,7 +4,6 @@
   display: flex;
   flex-wrap:wrap;
   margin: 170px auto;
-  padding: 0 5%;
   &-gosen{
     width: 32%;
     &:not(:nth-child(3n + 1)){

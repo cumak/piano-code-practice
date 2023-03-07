@@ -50,17 +50,17 @@
 			&-parts{
 				position: absolute;
 				left: 32%;
-				width: 40%;
+				width: 25%;
 				height: 50%;
 				pointer-events: none;
 				&.is-righthand{
-					top: -12.3%;
+					top: 3%;
 					.startPage & {
 						top: 4.3%;
 					}
 				}
 				&.is-lefthand{
-					bottom: 8.5%;
+					bottom: 2.3%;
 					.startPage & {
 						bottom: 2.2%;
 					}
@@ -133,13 +133,13 @@
 		// 右手パート
 		@for $i from 0 through 18{
 			&[data-num="#{$i}"]{
-				top: calc(100% / 13.4 * #{$i});//間隔調整のため二番目の数字をいろいろ変えてみる
+				top: calc(100% / 20.3 * #{$i});//間隔調整のため二番目の数字をいろいろ変えてみる
 			}
 		}
 		// 左手パート
 		@for $i from 19 through 32{
 			&[data-num="#{$i}"]{
-				top: calc(100% / 13.4 * (#{$i} - 18));
+				top: calc(100% / 20.3 * (#{$i} - 18));
 			}
 		}
 		.startPage & {
@@ -233,20 +233,20 @@
 			.is-righthand & {
 				top: 11%;
 				.addMain & {
-					top: 15%;
+					top: 9%;
 				}
 				.startPage & {
 					top: 11%;
 				}
 			}
 			.is-lefthand & {
-				top: 11%;
-				.addMain & {
-					top: 15%;
-				}
-				.startPage & {
-					top: 4%;
-				}
+				// top: 11%;
+				// .addMain & {
+				// 	top: -25%;
+				// }
+				// .startPage & {
+				// 	top: 4%;
+				// }
 			}
 		}
 		&.is-top2{
@@ -254,7 +254,7 @@
 			.is-righthand & {
 				top: 22%;
 				.addMain & {
-					top: 30%;
+					top: 19%;
 				}
 				.startPage & {
 					top: 21.5%;
@@ -263,7 +263,7 @@
 			.is-lefthand & {
 				top: 11%;
 				.addMain & {
-					top: 22.5%;
+					top: 14.5%;
 				}
 				.startPage & {
 					top: 16.5%;
@@ -275,7 +275,7 @@
 			.is-righthand & {
 				bottom: 9%;
 				.addMain & {
-					bottom: -20%;
+					bottom: 21.5%;
 				}
 				.startPage & {
 					bottom: 9.5%;
@@ -284,7 +284,7 @@
 			.is-lefthand & {
 				bottom: 20.5%;
 				.addMain & {
-					bottom: -13%;
+					bottom: 26%;
 				}
 				.startPage & {
 					bottom: 16%;
@@ -296,7 +296,7 @@
 			.is-righthand & {
 				bottom: -3%;
 				.addMain & {
-					bottom: -35%;
+					bottom: 11.5%;
 				}
 				.startPage & {
 					bottom: -0.5%;
