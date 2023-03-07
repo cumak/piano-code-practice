@@ -146,9 +146,9 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
   }
 
   // 和音削除ボタン押下
-  function eraseWaon() {
-    const filterdArr = selectedWaons.filter((e) => {
-      return !e.isSelected;
+  function eraseWaon(waonIndex) {
+    const filterdArr = selectedWaons.filter((_e, index) => {
+      return index !== waonIndex;
     });
     if (filterdArr.length === selectedWaons.length) {
       alert("削除したい和音を選択してください");
@@ -523,26 +523,36 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
                               <input type="text" name="code" defaultValue={waon.code} />
                             </div>
                           </div>
+                          <div className="onpuContainer-item-delete">
+                            <button
+                              className="onpuContainer-item-delete-btn"
+                              type="button"
+                              onClick={() => {
+                                eraseWaon(waon.index);
+                              }}
+                            >
+                              <Image src="/img/icon-trash.svg" alt="削除する" width="20" height="25" />
+                            </button>
+                          </div>
                         </div>
                       );
                     })}
                   </div>
                 </div>
               </div>
+              <div className="editBtns">
+                <button type="button" className="editBtns-item" onClick={addWaonArea}>
+                  <Image src="/img/icon-square-plus.svg" alt="和音追加" width="20" height="20" />
+                  <span className="editBtns-item-label">枠追加</span>
+                </button>
+                <button type="button" className="editBtns-item is-copy" onClick={eraseOnpu}>
+                  <Image src="/img/icon-remove-onpu.svg" alt="音符削除" width="20" height="20" />
+                  <span className="editBtns-item-label">音符削除</span>
+                </button>
+              </div>
             </div>
             <div className="actionArea">
               <div className="actionBtns">
-                <div className="actionBtns-row is-waon">
-                  <button type="button" className="btn-grad is-yellow" onClick={addWaonArea}>
-                    和音追加
-                  </button>
-                  <button type="button" className="btn-grad is-green" onClick={eraseWaon}>
-                    和音削除
-                  </button>
-                  <button type="button" className="btn-grad is-green" onClick={eraseOnpu}>
-                    音符削除
-                  </button>
-                </div>
                 <div className="actionBtns-row is-kigou">
                   <button
                     className="actionBtns-row-kigonBtn btn-grad is-gray"

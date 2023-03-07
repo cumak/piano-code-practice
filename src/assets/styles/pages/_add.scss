@@ -142,12 +142,20 @@
   display: flex;
   justify-content: space-between;
 	&-l{
-		width: 50%;
+		width: 55%;
 	}
 }
 
+.bottomArea-l{
+	display: flex;
+}
+
+.addMain{
+	flex:1;
+}
+
 .actionArea{
-	width: 42%;
+	width: 40%;
 	margin-top: 25px;
 }
 
@@ -213,5 +221,21 @@
 	}
 	&-inputArea{
 		margin-top: 10px;
+	}
+}
+
+.editBtns{
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	margin-top: 30px;
+	margin-left: 5%;
+	&-item{
+		width: 100%;
+		padding: 5px 10px;
+		text-align: left;
+		img{
+			margin-right: 6px;
+		}
 	}
 }

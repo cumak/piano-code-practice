@@ -104,6 +104,15 @@
 				}
 			}
 		}
+		&-delete{
+			width: 100%;
+			margin-top: 90px;
+			button{
+				width: 100%;
+				border: 1px solid #999;
+				border-radius: 3px;
+			}
+		}
 	}
 }
 
