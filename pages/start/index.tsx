@@ -89,13 +89,13 @@ const Start: FC = () => {
     msgShow("Start!", 1000);
 
     const timer = setInterval(() => {
-      start(qTime);
+      start(qTime, aTime);
     }, allTime);
     setTimer(timer);
 
-    start(qTime);
+    start(qTime, aTime);
 
-    function start(qTime) {
+    function start(qTime, aTime) {
       if (!codeRef.current) {
         return false;
       }
@@ -112,7 +112,7 @@ const Start: FC = () => {
           clearInterval(qaTimer);
           setTimeout(() => {
             stop();
-          }, qTime);
+          }, aTime);
         }
       }, qTime);
       setQaTimer(qaTimer);

@@ -68,6 +68,7 @@
   transform: scaleY(.7);
   transition: all .2s;
   transform-origin: top;
+  pointer-events: none;
   &-item{
     text-align: left;
     height: 50px;
@@ -88,5 +89,6 @@
   &.is-show{
     opacity: 1;
     transform: scaleY(1);
+    pointer-events: all;
   }
 }

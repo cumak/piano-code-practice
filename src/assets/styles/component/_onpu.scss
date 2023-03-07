@@ -27,7 +27,7 @@
 		width: 20%;
 		background: rgba(85, 255, 0, 0.171);
 		.startPage & {
-			width: 16%;
+			width: 25%;
 		}
 		& + &{
 			margin-left: 5%;
@@ -302,12 +302,12 @@
 					bottom: -0.5%;
 				}
 			}
-			.is-lefthand & {
-				bottom: -33%;
-				.startPage & {
-					bottom: 6%;
-				}
-			}
+			// .is-lefthand & {
+			// 	bottom: -33%;
+			// 	.startPage & {
+			// 		bottom: 6%;
+			// 	}
+			// }
 		}
 		&.is-long{
 			width: 245%;
