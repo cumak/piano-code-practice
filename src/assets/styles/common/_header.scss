@@ -5,13 +5,21 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
-  padding: 10px;
+  height: 80px;
+  padding: 0 10px;
   background: #f2f2f2;
   text-align: right;
   z-index: 3;
   &-info{
+    position: relative;
     display: flex;
     align-items: center;
+    &-user{
+      position: absolute;
+      top: 3px;
+      right: 0px;
+      font-size: 1.2rem;
+    }
     &-name{
       margin-right: 20px;
       font-size: 1.3rem;
@@ -19,6 +27,7 @@
     }
     &-btns{
       display: inline-flex;
+      margin-top: 10px;
       &-btn{
         & + &{
           margin-left: 10px;
@@ -35,6 +44,7 @@
 }
 
 .logo{
+  margin-top: 12px;
   &-img{
     position: relative;
     display: block;

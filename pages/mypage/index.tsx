@@ -134,6 +134,7 @@ const Mypage: FC = () => {
                                                 onpu.isSelected ? "is-select" : ""
                                               } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
                                               role="button"
+                                              tabIndex={0}
                                               data-num={onpu.num}
                                             >
                                               <Image src="/img/onpu.svg" alt="" fill />
@@ -160,7 +161,7 @@ const Mypage: FC = () => {
                                                 onpu.isSelected ? "is-select" : ""
                                               } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
                                               role="button"
-                                              tabIndex={noteIndex as number}
+                                              tabIndex={0}
                                               data-num={onpu.num}
                                             >
                                               <Image src="/img/onpu.svg" alt="" fill />

@@ -1,3 +1,5 @@
+import type { User } from "firebase/auth";
+import { deleteUser } from "firebase/auth";
 import type { DocumentData, Firestore } from "firebase/firestore";
 import { collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
 

@@ -43,7 +43,7 @@ const Category: FC = () => {
   }
 
   async function deleteCategory(id) {
-    if (window.confirm("削除しますか？")) {
+    if (window.confirm("削除しますか？\n※和音は削除されません")) {
       await deleteCate(id)
         .then(() => {
           alert("カテゴリーを削除しました");

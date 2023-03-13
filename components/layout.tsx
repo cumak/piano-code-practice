@@ -55,6 +55,7 @@ export function Layout({ children }) {
             </Link>
           </div>
           <div className="header-info">
+            {currentUser && <div className="header-info-user">{currentUser.email}</div>}
             <div className="header-info-btns">
               {currentUser && (
                 <>
@@ -70,7 +71,7 @@ export function Layout({ children }) {
                   </div>
                   <div className="header-info-btns-btn">
                     <Link className="btn-s is-red" href="/mypage/">
-                      My 和音
+                      マイ和音
                     </Link>
                   </div>
                   <div className="header-info-btns-btn">
@@ -84,9 +85,14 @@ export function Layout({ children }) {
                 <div className="header-info-btns-btn">
                   <div className="headerAccount">
                     <button className="headerAccount-icon" onClick={toggleAccountMenu}>
-                      <img src="/img/icon-user-circle.svg" alt="アカウント" />
+                      <img src="/img/icon-user-circle.svg" alt="ユーザーアカウント" />
                     </button>
                     <ul className="headerAccountMenu">
+                      <li className="headerAccountMenu-item">
+                        <span className="headerAccountMenu-item-link">
+                          <Link href="/signup/">新規ユーザー登録</Link>
+                        </span>
+                      </li>
                       <li className="headerAccountMenu-item">
                         <span
                           className="headerAccountMenu-item-link"
@@ -100,11 +106,6 @@ export function Layout({ children }) {
                           }}
                         >
                           ログアウト
-                        </span>
-                      </li>
-                      <li className="headerAccountMenu-item">
-                        <span className="headerAccountMenu-item-link">
-                          <Link href="/signup/">新規登録</Link>
                         </span>
                       </li>
                     </ul>
