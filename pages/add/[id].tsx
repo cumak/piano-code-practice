@@ -1,5 +1,5 @@
-import type { FetchedWGProps } from "@components/Edit";
-import { Edit } from "@components/Edit";
+import type { FetchedWGProps } from "@components/EditWaons";
+import { Edit } from "@components/EditWaons";
 import { Layout } from "@components/Layout";
 import { onAuthStateChanged } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
