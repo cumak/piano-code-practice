@@ -1,6 +1,6 @@
 import "firebase/firestore";
 
-import { Edit } from "@components/Edit";
+import { Edit } from "@components/EditWaons";
 import { Layout } from "@components/Layout";
 import type { FC } from "react";
 
