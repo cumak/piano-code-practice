@@ -433,8 +433,11 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
                               return selectToggleWaonArea(waon);
                             }}
                             onKeyDown={(e) => {
+                              if (e.key === "Backspace") {
+                                eraseWaon(waon.index);
+                              }
                               if (e.key === "Enter") {
-                                return selectToggleWaonArea(waon);
+                                selectToggleWaonArea(waon);
                               }
                             }}
                           >

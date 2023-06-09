@@ -59,10 +59,10 @@
 			}
 		}
 		// 左手パート
-		@for $i from 19 through 32{
+		@for $i from 19 through 33{
 			&[data-num="#{$i}"]{
 				top: calc(100% / 12.9 * (#{$i} - 18));
-				right: calc(5% * (#{$i} - 18) + 20%); //20%は、左に寄せるため
+				right: calc(5% * (#{$i} - 18) + 15%); //20%は、左に寄せるため
 			}
 		}
 		// 真ん中の線
@@ -89,7 +89,8 @@
 		}
 		// 上付きの線
 		&[data-num='16'],
-		&[data-num='18']
+		&[data-num='18'],
+		&[data-num='33']
 		{
 			&::before{
 				top: 0%;

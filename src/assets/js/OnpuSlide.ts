@@ -52,7 +52,7 @@ export const onpuSlide = () => {
       if (num <= 3 || num === 19 || num === 20) {
         line2.style.opacity = "1";
       }
-      if ((num >= 15 && num <= 18) || num === 32) {
+      if ((num >= 15 && num <= 18) || num === 32 || num === 33) {
         line3.style.opacity = "1";
       }
       if (num >= 17 && num <= 18) {

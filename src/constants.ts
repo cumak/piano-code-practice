@@ -33,6 +33,7 @@ export const ADD_ONPU_HEONKIGOU = [
   { onpuName: "ソ", dataNum: 30 },
   { onpuName: "ファ", dataNum: 31 },
   { onpuName: "ミ", dataNum: 32 },
+  { onpuName: "レ", dataNum: 33 },
 ];
 
 export const TONE_DATA = {
@@ -69,4 +70,5 @@ export const TONE_DATA = {
   30: ["G", 2, "L"],
   31: ["F", 2, "L"],
   32: ["E", 2, "L"],
+  33: ["D", 2, "L"],
 };
