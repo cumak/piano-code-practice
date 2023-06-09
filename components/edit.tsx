@@ -1,5 +1,5 @@
-import { CategoryOption } from "components/CategoryOption";
-import { ModalNewGroup } from "components/ModalNewGroup";
+import { CategoryOption } from "@components/CategoryOption";
+import { ModalNewGroup } from "@components/ModalNewGroup";
 import type { Firestore } from "firebase/firestore";
 import { addDoc, collection, doc, getFirestore, serverTimestamp, updateDoc } from "firebase/firestore";
 import Image from "next/image";

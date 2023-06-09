@@ -1,6 +1,6 @@
-import { Layout } from "@components/Layout";
 import type { FetchedWGProps } from "@components/Edit";
 import { Edit } from "@components/Edit";
+import { Layout } from "@components/Layout";
 import { onAuthStateChanged } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import { doc, getDoc, getFirestore } from "firebase/firestore";

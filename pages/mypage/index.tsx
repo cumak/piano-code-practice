@@ -152,7 +152,7 @@ const Mypage: FC = () => {
                                   </div>
                                   <div className="onpuContainer-item-main-parts is-lefthand js-onpuslide">
                                     <div className="onpuTama">
-                                      {waon.notes?.map((onpu, noteIndex) => {
+                                      {waon.notes?.map((onpu) => {
                                         return (
                                           onpu.num >= 19 && (
                                             <span
