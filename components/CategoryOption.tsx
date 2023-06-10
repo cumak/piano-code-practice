@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { useEffect, useState } from "react";
 
 import { getAllCate } from "@/assets/js/GetFromDB";
+import { PRESET_ID } from "@/constants";
 
 type Props = {
   disabled?: boolean;
@@ -9,6 +10,7 @@ type Props = {
   onChange?: () => void;
   defaultId?: string;
   setSelectedCateId?: React.Dispatch<React.SetStateAction<string>>;
+  addPresetOption?: boolean;
 };
 
 export const CategoryOption: FC<Props> = ({
@@ -17,8 +19,10 @@ export const CategoryOption: FC<Props> = ({
   onChange,
   defaultId = "default",
   setSelectedCateId,
+  addPresetOption = true,
 }) => {
   const [cateData, setCateData] = useState([]);
+  const [presetCateData, setPresetCateData] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -27,6 +31,17 @@ export const CategoryOption: FC<Props> = ({
       setSelectedCateId(defaultId);
     })();
   }, [defaultId]);
+
+  useEffect(() => {
+    if (!addPresetOption) {
+      return;
+    }
+    (async () => {
+      const presetDispData = await getAllCate(PRESET_ID);
+      console.log(presetCateData);
+      setPresetCateData(presetDispData);
+    })();
+  }, [addPresetOption]);
 
   function onChangeSelect(event) {
     onChange && onChange();
@@ -38,13 +53,21 @@ export const CategoryOption: FC<Props> = ({
       <option value="default" disabled={disabled}>
         {firstLabel}
       </option>
-      {cateData.map((name) => {
+      {cateData.map((cate) => {
         return (
-          <option value={name.docId} key={name.docId}>
-            {name.cateName}
+          <option value={cate.docId} key={cate.docId}>
+            {cate.cateName}
           </option>
         );
       })}
+      {addPresetOption &&
+        presetCateData.map((cate) => {
+          return (
+            <option key={cate.docId} value={`preset-${cate.docId}`}>
+              プリセット({cate.cateName})
+            </option>
+          );
+        })}
     </select>
   );
 };

@@ -8,12 +8,15 @@ import { useEffect, useRef, useState } from "react";
 import type { GetWaonGroupDataWithId, WaonGroup } from "@/assets/js/GetFromDB";
 import { getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
+import { PRESET_ID } from "@/constants";
 
 const Start: FC = () => {
   const codeRef = useRef<HTMLDivElement>(null);
   const onpuContainerRef = useRef<HTMLDivElement>(null);
 
   const [isShuffle, setIsShuffle] = useState(false);
+  // プリセットの和音グループ
+  const [presetWaonsGroup, setPresetWaonsGroup] = useState<GetWaonGroupDataWithId>();
   //ロードした和音グループ(カテゴリフィルター前を記憶)
   const [waonsGroupMoto, setWaonsGroupMoto] = useState<GetWaonGroupDataWithId>();
   //ロードした和音とコード(シャッフル前を記憶)
@@ -32,9 +35,22 @@ const Start: FC = () => {
     init();
   }, []);
 
+  async function init() {
+    const waonGroupDataWithId = await getWaonGroupDataWithId();
+    const presetWg = await getWaonGroupDataWithId(PRESET_ID);
+    setWaonsGroupMoto(waonGroupDataWithId);
+    setPresetWaonsGroup(presetWg);
+  }
+
   useEffect(() => {
-    categoryChange();
-  }, [selectedCateId]);
+    if (!presetWaonsGroup || !waonsGroupMoto) {
+      return;
+    }
+    const waonInfo = getCateFilteredWaon(waonsGroupMoto);
+    setWaonsArr(waonInfo);
+    setWaonsArrMoto(waonInfo);
+    setCurrentWaonGroup(waonInfo?.[0]?.waonGroupData.waons);
+  }, [waonsGroupMoto, presetWaonsGroup]);
 
   useEffect(() => {
     if (isShuffle) {
@@ -45,19 +61,9 @@ const Start: FC = () => {
     }
   }, [isShuffle]);
 
-  async function init() {
-    const waonInfo = await loadWaon();
-    setWaonsArr(waonInfo);
-    setWaonsArrMoto(waonInfo);
-    setCurrentWaonGroup(waonInfo?.[0]?.waonGroupData.waons);
-  }
-
-  async function loadWaon() {
-    const waonGroupDataWithId = await getWaonGroupDataWithId();
-    setWaonsGroupMoto(waonGroupDataWithId);
-    const filterdWaonGroupData = getCateFilteredWaon(waonGroupDataWithId);
-    return filterdWaonGroupData;
-  }
+  useEffect(() => {
+    categoryChange();
+  }, [selectedCateId]);
 
   function shuffle([...array]) {
     for (let i = array.length - 1; i >= 0; i--) {
@@ -140,7 +146,7 @@ const Start: FC = () => {
   }
 
   async function categoryChange() {
-    if (!waonsGroupMoto) {
+    if (!waonsGroupMoto || !presetWaonsGroup) {
       return;
     }
     const filterdWaonGroupData = getCateFilteredWaon(waonsGroupMoto);
@@ -152,6 +158,12 @@ const Start: FC = () => {
   function getCateFilteredWaon(arr: GetWaonGroupDataWithId) {
     if (selectedCateId === "default") {
       return arr;
+    }
+    if (selectedCateId.indexOf("preset-") !== -1) {
+      const id = selectedCateId.replace("preset-", "");
+      return presetWaonsGroup?.filter((wg) => {
+        return wg.waonGroupData.category === id;
+      });
     }
     const filterdWg = arr?.filter((wg) => {
       return wg.waonGroupData.category === selectedCateId;

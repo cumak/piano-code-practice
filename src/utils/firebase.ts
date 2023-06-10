@@ -19,4 +19,4 @@ const auth = getAuth(app);
 onAuthStateChanged(auth, () => {
   // console.log(user);
 });
-export { auth };
+export { app, auth };

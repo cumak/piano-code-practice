@@ -17,7 +17,7 @@
 	display: flex;
 	.startPage & {
 		right: auto;
-		width: 60%;
+		width: 74%;
 		height: 100%;
 		margin-left: 20%;
 		justify-content: space-evenly;
@@ -27,7 +27,7 @@
 		width: 20%;
 		background: rgba(85, 255, 0, 0.171);
 		.startPage & {
-			width: 25%;
+			width: 20%;
 		}
 		& + &{
 			margin-left: 5%;
@@ -49,7 +49,7 @@
 			}
 			&-parts{
 				position: absolute;
-				left: 32%;
+				left: 37%;
 				width: 25%;
 				height: 50%;
 				pointer-events: none;
@@ -177,7 +177,7 @@
 			}
 			&.is-slide{
 				&::before{
-					right: 248%;
+					right: 200%;
 				}
 			}
 		}
@@ -193,7 +193,7 @@
 			}
 			&.is-slide{
 				&::before{
-					right: 248%;
+					right: 200%;
 				}
 			}
 		}

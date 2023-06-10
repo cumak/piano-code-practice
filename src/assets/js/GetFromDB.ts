@@ -1,5 +1,3 @@
-import type { User } from "firebase/auth";
-import { deleteUser } from "firebase/auth";
 import type { DocumentData, Firestore } from "firebase/firestore";
 import { collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
 
@@ -38,14 +36,15 @@ export type GetAllCate = {
   docId: string;
 }[];
 
-export const getWaonGroupDataWithId = async (): Promise<GetWaonGroupDataWithId> => {
+export const getWaonGroupDataWithId = async (targetUser?): Promise<GetWaonGroupDataWithId> => {
   return new Promise((resolve) => {
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
         return false;
       }
+      const currentUser = targetUser || user.email;
       const userWaonGroupField: GetWaonGroupDataWithId = [];
-      const wgRef = collection(db, "user", user.email, "waonGroup");
+      const wgRef = collection(db, "user", currentUser, "waonGroup");
       const sortedWgRef = query(wgRef, orderBy("createdAt", "asc"));
       const wg = await getDocs(sortedWgRef);
       for (let i = 0; i < wg.docs.length; i++) {
@@ -59,13 +58,14 @@ export const getWaonGroupDataWithId = async (): Promise<GetWaonGroupDataWithId> 
   });
 };
 
-export async function getAllCate(): Promise<GetAllCate> {
+export async function getAllCate(targetUser?): Promise<GetAllCate> {
   return new Promise((resolve) => {
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
         return;
       }
-      const categoryDocs = await getDocs(collection(db, "user", user.email, "category"));
+      const currentUser = targetUser || auth.currentUser.email;
+      const categoryDocs = await getDocs(collection(db, "user", currentUser, "category"));
       const dispData = categoryDocs.docs.map((doc) => {
         const data = doc.data();
         return {

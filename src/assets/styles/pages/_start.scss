@@ -3,7 +3,7 @@
 .code{
   display: flex;
   justify-content: space-evenly;
-  width: 60%;
+  width: 74%;
   height: 60px;
   margin-bottom: 50px;
   padding-top: 80px;
@@ -11,9 +11,11 @@
   font-weight: bold;
   text-align:center;
   &-one{
+    display: block;
     @include font-roboto;
     line-height: 1.2;
     width: 16%;
+    height: 100%;
     font-size: 4rem;
   }
 }

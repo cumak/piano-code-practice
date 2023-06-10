@@ -599,7 +599,11 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
                 <div className="actionBtns-row is-group">
                   <section className="actionBtns-row-group">
                     <h2 className="actionBtns-row-group-title">カテゴリー</h2>
-                    <CategoryOption setSelectedCateId={setSelectedCateId} defaultId={selectedCateId} />
+                    <CategoryOption
+                      setSelectedCateId={setSelectedCateId}
+                      defaultId={selectedCateId}
+                      addPresetOption={false}
+                    />
                     <div className="actionBtns-row-group-newBtn">
                       <button className="btn-plus" data-micromodal-trigger="modal-1" type="button">
                         +
