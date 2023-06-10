@@ -176,6 +176,9 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
         if (note.isSelected) {
           note.sharp = !note.sharp;
         }
+        if (note.sharp) {
+          note.flat = false;
+        }
         return note;
       });
       selectedWaon.notes = customNote;
@@ -190,6 +193,9 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
       const customNote = selectedWaon.notes.map((note) => {
         if (note.isSelected) {
           note.flat = !note.flat;
+        }
+        if (note.flat) {
+          note.sharp = false;
         }
         return note;
       });
