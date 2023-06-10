@@ -2,7 +2,7 @@
 
 .selectGosenContainer{
   position: relative;
-  margin-bottom:40px;
+  margin-bottom:48px;
   width: 100%;
 	&-gosen{
 		aspect-ratio: 4.245;
@@ -51,6 +51,7 @@
 		background: transparent;
 		padding: 0;
 		aspect-ratio: 1.226;
+		cursor: pointer;
 		// 右手パート
 		@for $i from 18 through 0{
 			&[data-num="#{$i}"]{

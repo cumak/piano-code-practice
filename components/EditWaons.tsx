@@ -459,6 +459,7 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
                                         }}
                                         onKeyDown={(e) => {
                                           if (e.key === "Backspace") {
+                                            e.stopPropagation();
                                             eraseOnpu();
                                           }
                                           if (e.key === "Enter") {

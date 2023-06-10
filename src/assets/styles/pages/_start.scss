@@ -12,6 +12,7 @@
   text-align:center;
   &-one{
     @include font-roboto;
+    line-height: 1.2;
     width: 16%;
     font-size: 4rem;
   }

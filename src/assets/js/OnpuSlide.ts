@@ -30,10 +30,10 @@ export const onpuSlide = () => {
 
         if (num + 1 === nextTamaNum) {
           // ラインがちょっと伸びる場合
-          if (num === 2) {
+          if (num === 2 || num === 19 || num === 20) {
             line2.classList.add("is-long");
           }
-          if (num === 15) {
+          if (num === 15 || num === 32) {
             line3.classList.add("is-long");
           }
           if (num === 17) {
