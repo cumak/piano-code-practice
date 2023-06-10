@@ -1,35 +1,28 @@
 import { Layout } from "@components/Layout";
-import type { Firestore } from "firebase/firestore";
-import { deleteDoc, doc, getFirestore } from "firebase/firestore";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import type { FC } from "react";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "src/auth/AuthProvider";
 
 import type { GetAllCate, GetWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { getAllCate, getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
-import { playWaon } from "@/assets/js/playWaon";
+import { PRESET_ID } from "@/constants";
 
-const db: Firestore = getFirestore();
-
-const Mypage: FC = () => {
+const PresetPage = () => {
   const { currentUser } = useContext(AuthContext);
-  const router = useRouter();
   const [waonGroupDataWithId, setWaonGroupDataWithId] = useState<GetWaonGroupDataWithId>([]);
   const [allCate, setAllCate] = useState<GetAllCate>();
 
   useEffect(() => {
     (async () => {
-      const data = await getWaonGroupDataWithId();
+      const data = await getWaonGroupDataWithId(PRESET_ID);
       if (!data) {
         return;
       }
       setWaonGroupDataWithId(data);
     })();
     (async () => {
-      const data = await getAllCate();
+      const data = await getAllCate(PRESET_ID);
       data && setAllCate(data);
     })();
   }, [currentUser]);
@@ -49,76 +42,18 @@ const Mypage: FC = () => {
     }
   }
 
-  // 削除ボタン
-  function pushDeleteBtn(waonGroupId) {
-    if (window.confirm("この和音グループを削除しますか？")) {
-      deleteDoc(doc(db, "user", currentUser.email, "waonGroup", waonGroupId))
-        .then(() => {
-          alert("削除しました");
-          refresh();
-        })
-        .catch((err) => {
-          console.error(err);
-          alert("削除に失敗しました");
-        });
-    }
-  }
-
-  async function refresh() {
-    const newWaonGroupDataWithId = await getWaonGroupDataWithId();
-    setWaonGroupDataWithId([...newWaonGroupDataWithId]);
-  }
-
-  // 編集ボタン
-  function editGroup(id) {
-    router.push("./add/" + id);
-  }
-
   return (
     <Layout>
       <main className="main">
         <div className="mainWrapper">
           <div className="wrapper">
-            {waonGroupDataWithId.length === 0 && <p>ヘッダーの「和音登録」から和音を登録できます。</p>}
-            <div className="al-r">
-              <button
-                className="btn-s"
-                onClick={() => {
-                  return router.push("preset");
-                }}
-              >
-                プリセットの和音一覧
-              </button>
-            </div>
-            <div className="myWaon">
+            <p>プリセット登録されている和音の一覧です。</p>
+            <div className="myWaon is-preset">
               {waonGroupDataWithId.map((waonGroup) => {
                 return (
                   <div key={waonGroup.waonGid} className="myWaon-gosen" data-containernum="${i}" data-id="${waonGid}">
                     <div className="myWaonBtns">
-                      <div className="myWaonBtns-l">
-                        <div className="myWaonBtns-btn">
-                          <button
-                            type="button"
-                            className="btn-grad is-gray deleteBtn"
-                            onClick={() => {
-                              return pushDeleteBtn(waonGroup.waonGid);
-                            }}
-                          >
-                            削除
-                          </button>
-                        </div>
-                        <div className="myWaonBtns-btn">
-                          <button
-                            type="button"
-                            className="btn-grad is-green editBtn"
-                            onClick={() => {
-                              return editGroup(waonGroup.waonGid);
-                            }}
-                          >
-                            編集
-                          </button>
-                        </div>
-                      </div>
+                      <div className="myWaonBtns-l"></div>
                       <div className="myWaonBtns-r">
                         <div className="categoryIcon">{`${getTargetCateName(waonGroup.waonGroupData.category)}`}</div>
                       </div>
@@ -189,9 +124,6 @@ const Mypage: FC = () => {
                                   </div>
                                 </div>
                                 <div className="onpuContainer-item-opt">
-                                  <button type="button" className="onpuContainer-item-opt-sound" onClick={playWaon}>
-                                    <span className="onpuContainer-item-opt-sound-btn">♪</span>
-                                  </button>
                                   <div className="onpuContainer-item-opt-code">{waon.code}</div>
                                 </div>
                               </div>
@@ -211,4 +143,4 @@ const Mypage: FC = () => {
   );
 };
 
-export default Mypage;
+export default PresetPage;
