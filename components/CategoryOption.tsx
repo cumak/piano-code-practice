@@ -38,7 +38,6 @@ export const CategoryOption: FC<Props> = ({
     }
     (async () => {
       const presetDispData = await getAllCate(PRESET_ID);
-      console.log(presetCateData);
       setPresetCateData(presetDispData);
     })();
   }, [addPresetOption]);

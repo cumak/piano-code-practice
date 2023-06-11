@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 
 import { deleteCate, getAllCate } from "@/assets/js/GetFromDB";
+import { GUEST_ID } from "@/constants";
 import { auth } from "@/utils/firebase";
 
 const db: Firestore = getFirestore();
@@ -77,6 +78,7 @@ const Category: FC = () => {
               </button>
             </div>
           </div>
+          {auth?.currentUser?.email === GUEST_ID && <p>ゲストログインではカテゴリー作成はできません。</p>}
           <form className="categoryArea" onSubmit={handleSubmit(onSubmit)}>
             {fields.map((fields, index) => {
               return (

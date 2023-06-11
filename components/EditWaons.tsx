@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import type { WaonGroup } from "@/assets/js/GetFromDB";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
 import { playWaon } from "@/assets/js/playWaon";
-import { ADD_ONPU_HEONKIGOU, ADD_ONPU_TOONKIGOU } from "@/constants";
+import { ADD_ONPU_HEONKIGOU, ADD_ONPU_TOONKIGOU, GUEST_ID } from "@/constants";
 import { auth } from "@/utils/firebase";
 
 // Firestore のインスタンスを初期化
@@ -295,6 +295,11 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
         waons: waonObj,
         modifiedAt: serverTimestamp(),
         category: selectedCateId,
+      }).catch((error) => {
+        if (user.email === GUEST_ID) {
+          alert("ゲストログインでは和音作成はできません。");
+        }
+        console.error(error);
       });
     } else {
       await addDoc(wgCollection, {
@@ -302,6 +307,11 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
         modifiedAt: serverTimestamp(),
         createdAt: serverTimestamp(),
         category: selectedCateId,
+      }).catch((error) => {
+        if (user.email === GUEST_ID) {
+          alert("ゲストログインでは和音作成はできません。");
+        }
+        console.error(error);
       });
     }
     alert("和音を追加しました。");

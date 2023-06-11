@@ -4,6 +4,7 @@ import MicroModal from "micromodal";
 import type { FC } from "react";
 import { useEffect } from "react";
 
+import { GUEST_ID } from "@/constants";
 import { auth } from "@/utils/firebase";
 
 const db: Firestore = getFirestore();
@@ -28,11 +29,18 @@ export const ModalNewGroup: FC<Props> = ({ callbackAfterCreate }) => {
     const user = auth.currentUser;
     addDoc(collection(db, "user", user.email, "category"), {
       name: newGroupName,
-    }).then((e) => {
-      alert("カテゴリーを追加しました");
-      MicroModal.close("modal-1");
-      callbackAfterCreate && callbackAfterCreate(e.id);
-    });
+    })
+      .then((e) => {
+        alert("カテゴリーを追加しました");
+        MicroModal.close("modal-1");
+        callbackAfterCreate && callbackAfterCreate(e.id);
+      })
+      .catch((error) => {
+        if (user.email === GUEST_ID) {
+          alert("ゲストログインではカテゴリー作成はできません。");
+        }
+        console.error("Error adding document: ", error);
+      });
   }
 
   return (

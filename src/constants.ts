@@ -1,4 +1,5 @@
 export const PRESET_ID = "info.n@cumak.net";
+export const GUEST_ID = "info.pcpguest@cumak.net";
 
 export const ADD_ONPU_TOONKIGOU = [
   { onpuName: "ド", dataNum: 1 },

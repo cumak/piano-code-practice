@@ -78,7 +78,7 @@ const Start: FC = () => {
       return;
     }
     if (!waonsArr.length) {
-      alert("和音が登録されていません。");
+      alert("和音が登録されていません。\nゲストログインの方はカテゴリーからプリセットを選んでください。");
       return;
     }
     const qEl = document.getElementById("qTime") as HTMLInputElement;

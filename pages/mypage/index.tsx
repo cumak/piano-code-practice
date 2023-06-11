@@ -11,6 +11,8 @@ import type { GetAllCate, GetWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { getAllCate, getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
 import { playWaon } from "@/assets/js/playWaon";
+import { GUEST_ID } from "@/constants";
+import { auth } from "@/utils/firebase";
 
 const db: Firestore = getFirestore();
 
@@ -79,7 +81,16 @@ const Mypage: FC = () => {
       <main className="main">
         <div className="mainWrapper">
           <div className="wrapper">
-            {waonGroupDataWithId.length === 0 && <p>ヘッダーの「和音登録」から和音を登録できます。</p>}
+            {waonGroupDataWithId.length === 0 && currentUser?.email !== GUEST_ID && (
+              <p>画面右上の「和音登録」から和音を登録できます。</p>
+            )}
+            {currentUser?.email === GUEST_ID && (
+              <p>
+                ゲストログインではマイ和音の登録はできません。
+                <br />
+                プリセット再生のみとなります。
+              </p>
+            )}
             <div className="al-r">
               <button
                 className="btn-s"

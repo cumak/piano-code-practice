@@ -28,6 +28,15 @@ const Login: FC = () => {
     }
   };
 
+  const onGuestLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, "info.pcpguest@cumak.net", "guest876");
+      setIsLogin(true);
+    } catch (err) {
+      alert(firebaseError(err, "signin"));
+    }
+  };
+
   return (
     <Layout>
       <main className="main">
@@ -63,6 +72,11 @@ const Login: FC = () => {
                 </button>
               </div>
             </form>
+            <div className="guestLogin">
+              <button className="btn-s" onClick={onGuestLogin}>
+                ゲストユーザーとしてログインする
+              </button>
+            </div>
           </div>
         </div>
       </main>

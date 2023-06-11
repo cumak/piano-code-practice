@@ -31,26 +31,30 @@
   display: inline-block;
   padding: 10px 20px;
   border-radius: 3px;
-  background: #ccc;
+  background: #f0f0f0;
   font-weight: bold;
   letter-spacing: .1rem;
-  border: none;
+  border: 1px solid #ccc;
   transition: all .3s;
   cursor: pointer;
   &.is-orange{
     background: #ff8800;
+    border: none;
     color: #fff;
   }
   &.is-pink{
     background: #ad1c89;
+    border: none;
     color: #fff;
   }
   &.is-red{
     background: $themeColor;
+    border: none;
     color: #fff;
   }
   &.is-blue{
     background: #32a8e4;
+    border: none;
     color: #fff;
   }
   @include hover{

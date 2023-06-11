@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 
 import { AuthContext } from "@/auth/AuthProvider";
+import { GUEST_ID } from "@/constants";
 import { auth } from "@/utils/firebase";
 
 export function Layout({ children }) {
@@ -55,7 +56,11 @@ export function Layout({ children }) {
             </Link>
           </div>
           <div className="header-info">
-            {currentUser && <div className="header-info-user">{currentUser.email}</div>}
+            {currentUser?.email === GUEST_ID ? (
+              <div className="header-info-user">ゲストユーザー</div>
+            ) : (
+              <div className="header-info-user">{currentUser?.email}</div>
+            )}
             <div className="header-info-btns">
               {currentUser && (
                 <>

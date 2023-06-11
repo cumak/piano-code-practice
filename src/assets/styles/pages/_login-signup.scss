@@ -1,13 +1,23 @@
 
-.loginForm{
+.formWrapper{
   position: fixed;
   top: 20%;
   left: calc(50% - 300px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   max-width: 600px;
   width: 100%;
+}
+
+.loginForm{
   padding: 30px;
   border: 1px solid #ccc;
   border-radius: 10px;
+}
+
+.guestLogin{
+  text-align: center;
 }
 
 .formItem{
