@@ -51,7 +51,7 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
       const createSetData = () => {
         const waons = fetchedWGProps.waonGroup.waons;
         const forSetData: SelectedWaon[] = [];
-        waons.forEach((theWaon) => {
+        waons?.forEach((theWaon) => {
           forSetData.push({
             code: theWaon.code,
             index: theWaon.index,
@@ -291,30 +291,37 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
     }
     const wgCollection = collection(db, "user", user.email, "waonGroup");
     if (isEditMode) {
-      await updateDoc(doc(wgCollection, routeId as string), {
-        waons: waonObj,
-        modifiedAt: serverTimestamp(),
-        category: selectedCateId,
-      }).catch((error) => {
+      // 新規追加
+      try {
+        await updateDoc(doc(wgCollection, routeId as string), {
+          waons: waonObj,
+          modifiedAt: serverTimestamp(),
+          category: selectedCateId,
+        });
+        alert("更新しました。");
+      } catch (error) {
         if (user.email === GUEST_ID) {
-          alert("ゲストログインでは和音作成はできません。");
+          alert("ゲストログインでは和音編集はできません。");
         }
         console.error(error);
-      });
+      }
     } else {
-      await addDoc(wgCollection, {
-        waons: waonObj,
-        modifiedAt: serverTimestamp(),
-        createdAt: serverTimestamp(),
-        category: selectedCateId,
-      }).catch((error) => {
+      // 編集
+      try {
+        await addDoc(wgCollection, {
+          waons: waonObj,
+          modifiedAt: serverTimestamp(),
+          createdAt: serverTimestamp(),
+          category: selectedCateId,
+        });
+        alert("和音を追加しました。");
+      } catch (error) {
         if (user.email === GUEST_ID) {
           alert("ゲストログインでは和音作成はできません。");
         }
         console.error(error);
-      });
+      }
     }
-    alert("和音を追加しました。");
     // 新規追加モードなら登録後クリアする
     if (!isEditMode) {
       setSelectedWaons([]);
@@ -369,7 +376,7 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
     <main className="main">
       <form action="">
         <div className="mainWrapper">
-          <h1 className="title-l">問題登録</h1>
+          <h1 className="title-l">{isEditMode ? <>和音編集</> : <>和音作成</>}</h1>
           <div className="selectGosenContainer">
             <div className="selectGosenContainer-gosen">
               <Image src="/img/gosen-long.svg" alt="" fill />

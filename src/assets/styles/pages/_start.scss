@@ -2,21 +2,21 @@
 
 .code{
   display: flex;
-  justify-content: space-evenly;
-  width: 74%;
-  height: 60px;
+  justify-content: space-between;
+  width: 60%;
   margin-bottom: 50px;
-  padding-top: 140px;
-  margin-left: 20%;
+  padding-top: 70px;
+  margin: 0 15% 0 auto;
   font-weight: bold;
   text-align:center;
   &-one{
     display: block;
     @include font-roboto;
     line-height: 1.2;
-    width: 16%;
+    width: 20%;
     height: 100%;
     font-size: 4rem;
+    text-align: center;
   }
 }
 .gosenContainer{
@@ -37,7 +37,12 @@
 .startBtn{
   position: fixed;
   top: 100px;
-  right: 40px;
+  right: 20px;
+  .btn-big{
+    width: 140px;
+    height: 40px;
+    font-size: 2rem;
+  }
 }
 
 .userSetting{

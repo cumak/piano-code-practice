@@ -1,12 +1,5 @@
 @use '../variable' as *;
-.addMain{
-	&-inner{
-		position: relative;
-	}
-	&-gosen{
-		aspect-ratio: 2.146;
-	}
-}
+
 
 .onpuContainer{
 	position: absolute;
@@ -15,25 +8,22 @@
 	width: 60%;
 	height: 110%;
 	display: flex;
+	aspect-ratio: 2.146;
 	.startPage & {
-		right: auto;
-		width: 74%;
-		height: 100%;
-		margin-left: 20%;
-		justify-content: space-evenly;
+		justify-content: space-between;
 	}
 	&-item{
 		position: relative;
 		width: 20%;
+		height: 100%;
 		background: rgba(85, 255, 0, 0.171);
-		.startPage & {
-			width: 20%;
+		.is-preset &{
+			display: flex;
+			flex-direction: column;
+			gap:10px;
 		}
 		& + &{
 			margin-left: 5%;
-			.startPage & {
-				margin-left: 0;
-			}
 		}
 		&-main{
 			appearance: none;
@@ -45,7 +35,8 @@
 			.is-select &{
 				box-shadow: 0 0 0 1px #00b7ff;
 			}
-			.addMain & {
+			.is-preset & {
+				order:1;
 			}
 			&-parts{
 				position: absolute;
@@ -56,29 +47,25 @@
 				&.is-righthand{
 					top: 3%;
 					.startPage & {
-						top: 4.3%;
+						top: 5.2%;
 					}
 				}
 				&.is-lefthand{
 					bottom: 2.3%;
 					.startPage & {
-						bottom: 2.2%;
+						bottom: 5.3%;
 					}
 				}
 			}
 		}
 		&-opt{
-			position: absolute;
-			top: calc(100% + 20px);
-			left: 0;
 			width: 100%;
+			margin-top: 20px;
 			.is-preset & {
-				top: -24px;
+				margin-top: -30px;
 			}
 			&-code{
-				position: absolute;
-				top: 120%;
-				left: 0;
+				margin-top: 10px;
 				width: 100%;
 				font-size: 1.3rem;
 				font-weight: bold;
@@ -109,7 +96,7 @@
 		}
 		&-delete{
 			width: 100%;
-			margin-top: 90px;
+			margin-top: 20px;
 			button{
 				width: 100%;
 				border: 1px solid #999;
@@ -132,6 +119,7 @@
 		aspect-ratio: 1.226;
 		padding: 0;
 		background: none;
+		margin: 0;
 		border: none;
 		// 右手パート
 		@for $i from 0 through 18{
@@ -146,21 +134,13 @@
 			}
 		}
 		.startPage & {
-			// 右手パート
-			@for $i from 0 through 18{
-				&[data-num="#{$i}"]{
-					top: calc(100% / 18.0 * #{$i});//間隔調整のため二番目の数字をいろいろ変えてみる
-				}
-			}
-			// 左手パート
-			@for $i from 19 through 32{
-				&[data-num="#{$i}"]{
-					top: calc(100% / 18.0 * (#{$i} - 18));
-				}
-			}
+			transform: scale(1.17);
 		}
 		&.is-slide{
 			margin-left: 90%;
+			.startPage & {
+				margin-left: 105%;
+			}
 		}
 		&.is-select{
 			background: url(/img/onpu-on.svg) center center / 100% 100% no-repeat;
@@ -200,7 +180,6 @@
 				}
 			}
 		}
-
 		img{
 			width: 100%;
 			height: 100%;
@@ -218,9 +197,6 @@
 		width: 66%;
 		height: 3px;
 		background: #000;
-		@include sp{
-			height: 2px;
-		}
 		.addMain & {
 			left: -25%;
 			width: 160%;
@@ -230,93 +206,47 @@
 			left: -25%;
 			width: 160%;
 			height: 3px;
+			&.is-top1, &.is-top2{
+				margin-top: -1px;
+			}
+			&.is-bottom1, &.is-bottom2{
+				margin-top: -1px;
+			}
 		}
 		&.is-top1{
 			opacity: 0;
 			.is-righthand & {
-				top: 11%;
-				.addMain & {
-					top: 9%;
-				}
-				.startPage & {
-					top: 11%;
-				}
+				top: 9%;
 			}
 			.is-lefthand & {
-				// top: 11%;
-				// .addMain & {
-				// 	top: -25%;
-				// }
-				// .startPage & {
-				// 	top: 4%;
-				// }
 			}
 		}
 		&.is-top2{
 			opacity: 0;
 			.is-righthand & {
-				top: 22%;
-				.addMain & {
-					top: 19%;
-				}
-				.startPage & {
-					top: 21.5%;
-				}
+				top: 19%;
 			}
 			.is-lefthand & {
-				top: 11%;
-				.addMain & {
-					top: 14.5%;
-				}
-				.startPage & {
-					top: 16.5%;
-				}
+				top: 14.5%;
 			}
 		}
 		&.is-bottom1{
 			opacity: 0;
 			.is-righthand & {
-				bottom: 9%;
-				.addMain & {
-					bottom: 21.5%;
-				}
-				.startPage & {
-					bottom: 9.5%;
-				}
+				bottom: 21.5%;
 			}
 			.is-lefthand & {
-				bottom: 20.5%;
-				.addMain & {
-					bottom: 26%;
-				}
-				.startPage & {
-					bottom: 16%;
-				}
+				bottom: 26%;
 			}
 		}
 		&.is-bottom2{
 			opacity: 0;
 			.is-righthand & {
-				bottom: -3%;
-				.addMain & {
-					bottom: 11.5%;
-				}
-				.startPage & {
-					bottom: -0.5%;
-				}
+				bottom: 11.5%;
 			}
-			// .is-lefthand & {
-			// 	bottom: -33%;
-			// 	.startPage & {
-			// 		bottom: 6%;
-			// 	}
-			// }
 		}
 		&.is-long{
 			width: 245%;
-			.startPage & {
-				width: 217%;
-			}
 		}
 	}
 }
