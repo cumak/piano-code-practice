@@ -67,9 +67,11 @@
 			&-code{
 				margin-top: 10px;
 				width: 100%;
-				font-size: 1.3rem;
+				font-size: min(1.5rem,1vw);
 				font-weight: bold;
 				text-align: center;
+				@include font-roboto;
+				font-weight: normal;;
 				input{
 					display: block;
 					width: 100%;
