@@ -22,6 +22,9 @@
 			flex-direction: column;
 			gap:10px;
 		}
+		.startPage & {
+			background: transparent;
+		}
 		& + &{
 			margin-left: 5%;
 		}
