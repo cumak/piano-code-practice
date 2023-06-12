@@ -107,10 +107,15 @@ textarea{
 	border: 1px solid  #b7b7b7;
 }
 select{
+	appearance: none;
 	padding: 8px 10px;
 	border: 1px solid  #b7b7b7;
 }
 textarea{
   width: 100%;
   height: 200px;
+}
+button{
+	cursor: pointer;
+	color: $fontColor;
 }
