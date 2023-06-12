@@ -1,6 +1,6 @@
 @use '../variable' as *;
 
-.bottomArea{
+.operationArea{
   display: flex;
   justify-content: space-between;
 	&-l{
@@ -8,12 +8,14 @@
 	}
 }
 
-.bottomArea-l{
+.operationArea-l{
 	display: flex;
 }
 
 .addMain{
 	flex:1;
+	max-width: 1000px;
+	margin: 0 auto;
 	&-inner{
 		position: relative;
 	}
@@ -65,9 +67,8 @@
 
 .registerBtn{
 	@include section-center;
-	margin-top: 60px;
-	padding-right: 5%;
-	text-align: right;
+	margin-top: 220px;
+	text-align: center;
 }
 
 .newGroupAdd{
