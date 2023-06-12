@@ -1,5 +1,6 @@
 import { CategoryOption } from "@components/CategoryOption";
 import { ModalNewGroup } from "@components/ModalNewGroup";
+import { SelectGosenContainer } from "@components/SelectGosenContainer";
 import type { Firestore } from "firebase/firestore";
 import { addDoc, collection, doc, getFirestore, serverTimestamp, updateDoc } from "firebase/firestore";
 import Image from "next/image";
@@ -377,65 +378,7 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
       <form action="">
         <div className="mainWrapper">
           <h1 className="title-l">{isEditMode ? <>和音編集</> : <>和音作成</>}</h1>
-          <div className="selectGosenContainer">
-            <div className="selectGosenContainer-gosen">
-              <Image src="/img/gosen-long.svg" alt="" fill />
-            </div>
-            <div className="selectOnpuContainer">
-              <div className="selectOnpuContainer-item">
-                <div className="selectOnpuContainer-item-main">
-                  <div className="selectOnpuContainer-item-main-parts is-righthand">
-                    <div className="selectOnpuTama">
-                      {ADD_ONPU_TOONKIGOU.map((onpu) => {
-                        return (
-                          <button
-                            key={onpu.dataNum}
-                            className="selectOnpuTama-one"
-                            data-num={onpu.dataNum}
-                            type="button"
-                            onClick={(e) => {
-                              return onpuSelected(e.target);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                return onpuSelected(e.target);
-                              }
-                            }}
-                          >
-                            <Image src="/img/onpu.svg" alt={onpu.onpuName} fill />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <div className="selectOnpuContainer-item-main-parts is-lefthand">
-                    <div className="selectOnpuTama">
-                      {ADD_ONPU_HEONKIGOU.map((onpu) => {
-                        return (
-                          <button
-                            key={onpu.dataNum}
-                            className="selectOnpuTama-one"
-                            type="button"
-                            data-num={onpu.dataNum}
-                            onClick={(e) => {
-                              return onpuSelected(e.target);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                return onpuSelected(e.target);
-                              }
-                            }}
-                          >
-                            <Image src="/img/onpu.svg" alt={onpu.onpuName} fill />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <SelectGosenContainer onpuSelected={onpuSelected} />
           <div className="bottomArea">
             <div className="bottomArea-l">
               <div className="addMain">
