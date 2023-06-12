@@ -35,6 +35,10 @@
 			.is-select &{
 				box-shadow: 0 0 0 1px #00b7ff;
 			}
+			&:focus {
+				outline: 3px solid #2630c4;
+				border-radius: 4px;
+			}
 			.is-preset & {
 				order:1;
 			}
@@ -123,18 +127,8 @@
 		background: none;
 		margin: 0;
 		border: none;
-		// 右手パート
-		@for $i from 0 through 18{
-			&[data-num="#{$i}"]{
-				top: calc(100% / 20.3 * #{$i});//間隔調整のため二番目の数字をいろいろ変えてみる
-			}
-		}
-		// 左手パート
-		@for $i from 19 through 33{
-			&[data-num="#{$i}"]{
-				top: calc(100% / 20.3 * (#{$i} - 18));
-			}
-		}
+		cursor: pointer;
+		@include onpu-posioning;
 		.startPage & {
 			transform: scale(1.17);
 		}

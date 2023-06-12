@@ -69,6 +69,21 @@ $widthTab : 768px; //タブレット
   }
 }
 
+@mixin onpu-posioning(){
+  // 右手パート
+  @for $i from 0 through 18{
+    &[data-num="#{$i}"]{
+      top: calc(100% / 20.3 * #{$i});//間隔調整のため二番目の数字をいろいろ変えてみる
+    }
+  }
+  // 左手パート
+  @for $i from 19 through 33{
+    &[data-num="#{$i}"]{
+      top: calc(100% / 20.3 * (#{$i} - 18));
+    }
+  }
+}
+
 /* font */
 
 $font-go-base: "Hiragino Kaku Gothic Pro" , "Yu Gothic Medium" , "Yu Gothic", Meiryo ,sans-serif;

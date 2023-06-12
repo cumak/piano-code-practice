@@ -24,7 +24,6 @@ type Props = {
 type SelectedWaon = {
   code?: string;
   index: number;
-  isSelected?: boolean;
   notes?: {
     num: number;
     flat: boolean;
@@ -55,7 +54,6 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
           forSetData.push({
             code: theWaon.code,
             index: theWaon.index,
-            isSelected: false,
             notes: theWaon.notes,
           });
         });
@@ -63,13 +61,17 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
       };
       setSelectedWaons([...createSetData()]);
     }
+
+    if (!isEditMode) {
+      addWaonArea();
+    }
   }, []);
 
   useEffect(() => {
     onpuSlide();
   }, [selectedWaons]);
 
-  // 「和音追加」押下
+  // 「枠追加」押下
   function addWaonArea() {
     // コード4つ以上になってないか
     if (selectedWaons.length >= 4) {
@@ -77,39 +79,23 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
       return false;
     }
     const newSelectedWaons = selectedWaons.map((selectedWaon) => {
-      selectedWaon.isSelected = false;
       selectedWaon.notes.forEach((note) => {
         note.isSelected = false;
       });
       return selectedWaon;
     });
-    setSelectedWaons([
-      ...indexReNumber(newSelectedWaons),
-      { index: selectedWaons.length, isSelected: true, notes: [] },
-    ]);
+    setSelectedWaons([...indexReNumber(newSelectedWaons), { index: selectedWaons.length, notes: [] }]);
   }
 
-  // 上の音符を選んだとき
-  function onpuSelected(target) {
-    const targetnum = target.closest(".selectOnpuTama-one").dataset.num;
+  // 五線譜クリック
+  function onClickSelected(num, waonIndex) {
+    const targetnum = num;
 
-    const selectedItem = selectedWaons.find((selectedWaon) => {
-      return selectedWaon.isSelected === true;
+    //同じ音符があったら追加しない
+    const isSameNote = selectedWaons[waonIndex].notes.some((note) => {
+      return note.num === targetnum;
     });
-
-    // 追加先が選択されてなかったら終了
-    if (!selectedItem && selectedWaons.length) {
-      alert("追加先のエリアを選択してください。");
-      return false;
-    }
-
-    const isFirst = !selectedWaons.length ? true : false;
-
-    // 同じものをクリックしたら追加しない
-    const isExistTama = selectedItem?.notes?.some((item) => {
-      return item.num === targetnum;
-    });
-    if (isExistTama) {
+    if (isSameNote) {
       return false;
     }
 
@@ -119,30 +105,20 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
       sharp: false,
       isSelected: false,
     };
-    if (isFirst) {
-      setSelectedWaons([
-        {
-          code: "",
-          index: 0,
-          isSelected: true,
-          notes: [addNotes],
-        },
-      ]);
-    } else {
-      const newState = selectedWaons.map((waon) => {
-        if (waon.isSelected) {
-          waon.notes.push(addNotes);
-          sortNotes(waon.notes);
-          waon.notes.forEach((e) => {
-            return (e.isSelected = false);
-          });
-          return waon;
-        } else {
-          return waon;
-        }
-      });
-      setSelectedWaons([...newState]);
-    }
+
+    const newState = selectedWaons.map((waon, i) => {
+      if (i === waonIndex) {
+        waon.notes.push(addNotes);
+        sortNotes(waon.notes);
+        waon.notes.forEach((e) => {
+          return (e.isSelected = false);
+        });
+        return waon;
+      } else {
+        return waon;
+      }
+    });
+    setSelectedWaons([...newState]);
   }
 
   // 和音削除ボタン押下
@@ -343,18 +319,6 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
     });
   }
 
-  function selectToggleWaonArea(currentWaon) {
-    const newSelectedWaons = selectedWaons.map((e, i) => {
-      if (currentWaon.index === i) {
-        e.isSelected = !e.isSelected;
-      } else {
-        e.isSelected = false;
-      }
-      return e;
-    });
-    setSelectedWaons([...newSelectedWaons]);
-  }
-
   function toggleNoteSelect(event, noteIndex, currentWaon) {
     event.stopPropagation();
     const newSelectedWaon = selectedWaons.map((selectedWaon, i) => {
@@ -377,263 +341,231 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
       <form action="">
         <div className="mainWrapper">
           <h1 className="title-l">{isEditMode ? <>和音編集</> : <>和音作成</>}</h1>
-          <div className="selectGosenContainer">
-            <div className="selectGosenContainer-gosen">
-              <Image src="/img/gosen-long.svg" alt="" fill />
-            </div>
-            <div className="selectOnpuContainer">
-              <div className="selectOnpuContainer-item">
-                <div className="selectOnpuContainer-item-main">
-                  <div className="selectOnpuContainer-item-main-parts is-righthand">
-                    <div className="selectOnpuTama">
-                      {ADD_ONPU_TOONKIGOU.map((onpu) => {
-                        return (
-                          <button
-                            key={onpu.dataNum}
-                            className="selectOnpuTama-one"
-                            data-num={onpu.dataNum}
-                            type="button"
-                            onClick={(e) => {
-                              return onpuSelected(e.target);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                return onpuSelected(e.target);
-                              }
-                            }}
-                          >
-                            <Image src="/img/onpu.svg" alt={onpu.onpuName} fill />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <div className="selectOnpuContainer-item-main-parts is-lefthand">
-                    <div className="selectOnpuTama">
-                      {ADD_ONPU_HEONKIGOU.map((onpu) => {
-                        return (
-                          <button
-                            key={onpu.dataNum}
-                            className="selectOnpuTama-one"
-                            type="button"
-                            data-num={onpu.dataNum}
-                            onClick={(e) => {
-                              return onpuSelected(e.target);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                return onpuSelected(e.target);
-                              }
-                            }}
-                          >
-                            <Image src="/img/onpu.svg" alt={onpu.onpuName} fill />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="bottomArea">
-            <div className="bottomArea-l">
-              <div className="addMain">
-                <div className="addMain-inner">
-                  <div className="addMain-gosen">
-                    <Image src="/img/gosen-add.svg" alt="" fill />
-                  </div>
-                  {/* 決定した和音 */}
-                  <div className="onpuContainer">
-                    {selectedWaons.map((waon) => {
-                      return (
-                        <div key={waon.index} className={`onpuContainer-item ${waon.isSelected && "is-select"}`}>
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            className="onpuContainer-item-main"
-                            onClick={() => {
-                              return selectToggleWaonArea(waon);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Backspace") {
-                                eraseWaon(waon.index);
-                              }
-                              if (e.key === "Enter") {
-                                selectToggleWaonArea(waon);
-                              }
-                            }}
-                          >
-                            <div className="onpuContainer-item-main-parts is-righthand js-onpuslide">
-                              <div className="onpuTama">
-                                {waon.notes?.map((onpu, noteIndex) => {
-                                  return (
-                                    onpu.num <= 18 && (
-                                      <button
-                                        key={onpu.num}
-                                        type="button"
-                                        className={`onpuTama-one js-onpuslide-one ${
-                                          onpu.isSelected ? "is-select" : ""
-                                        } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
-                                        tabIndex={0}
-                                        data-num={onpu.num}
-                                        onClick={(e) => {
-                                          toggleNoteSelect(e, noteIndex, waon);
-                                        }}
-                                        onKeyDown={(e) => {
-                                          if (e.key === "Backspace") {
-                                            e.stopPropagation();
-                                            eraseOnpu();
-                                          }
-                                          if (e.key === "Enter") {
-                                            toggleNoteSelect(e, noteIndex, waon);
-                                          }
-                                        }}
-                                      >
-                                        <Image src="/img/onpu.svg" alt="" fill />
-                                      </button>
-                                    )
-                                  );
-                                })}
-                              </div>
-                              <div className="onpuLine">
-                                <span className="onpuLine-item is-top1"></span>
-                                <span className="onpuLine-item is-top2"></span>
-                                <span className="onpuLine-item is-bottom1"></span>
-                                <span className="onpuLine-item is-bottom2"></span>
-                              </div>
-                            </div>
-                            <div className="onpuContainer-item-main-parts is-lefthand js-onpuslide">
-                              <div className="onpuTama">
-                                {waon.notes?.map((onpu, noteIndex) => {
-                                  return (
-                                    onpu.num >= 19 && (
-                                      <button
-                                        key={onpu.num}
-                                        type="button"
-                                        className={`onpuTama-one js-onpuslide-one ${
-                                          onpu.isSelected ? "is-select" : ""
-                                        } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
-                                        tabIndex={0}
-                                        data-num={onpu.num}
-                                        onClick={(e) => {
-                                          toggleNoteSelect(e, noteIndex, waon);
-                                        }}
-                                        onKeyDown={(e) => {
-                                          if (e.key === "Backspace") {
-                                            eraseOnpu();
-                                          }
-                                          if (e.key === "Enter") {
-                                            toggleNoteSelect(e, noteIndex, waon);
-                                          }
-                                        }}
-                                      >
-                                        <Image src="/img/onpu.svg" alt="" fill />
-                                      </button>
-                                    )
-                                  );
-                                })}
-                              </div>
-                              <div className="onpuLine">
-                                <span className="onpuLine-item is-top1"></span>
-                                <span className="onpuLine-item is-top2"></span>
-                                <span className="onpuLine-item is-bottom1"></span>
-                                <span className="onpuLine-item is-bottom2"></span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="onpuContainer-item-opt">
-                            <button type="button" className="onpuContainer-item-opt-sound" onClick={playWaon}>
-                              <span className="onpuContainer-item-opt-sound-btn">♪</span>
-                            </button>
-                            <div className="onpuContainer-item-opt-code">
-                              <input type="text" name="code" defaultValue={waon.code} />
-                            </div>
-                          </div>
-                          <div className="onpuContainer-item-delete">
-                            <button
-                              className="onpuContainer-item-delete-btn"
-                              type="button"
-                              onClick={() => {
-                                eraseWaon(waon.index);
-                              }}
-                            >
-                              <Image src="/img/icon-trash.svg" alt="削除する" width="20" height="25" />
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="editBtns">
-                <button type="button" className="editBtns-item" onClick={addWaonArea}>
-                  <Image src="/img/icon-square-plus.svg" alt="和音追加" width="20" height="20" />
-                  <span className="editBtns-item-label">枠追加</span>
-                </button>
-                <button type="button" className="editBtns-item is-copy" onClick={eraseOnpu}>
-                  <Image src="/img/icon-remove-onpu.svg" alt="音符削除" width="20" height="20" />
-                  <span className="editBtns-item-label">音符削除</span>
-                </button>
-                <div className="editBtns-item is-culumn">
-                  <div className="editBtns-item-one">
-                    <button
-                      className="editBtns-item-one-kigouBtn"
-                      onClick={addSharp}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          addSharp;
-                        }
-                      }}
-                      type="button"
-                    >
-                      <span className="editBtns-item-one-kigouBtn-imgWrap">
-                        <Image src="/img/sharp.svg" alt="シャープ" fill />
-                      </span>
+          <div className="operationArea">
+            <div className="editBtns">
+              <button type="button" className="editBtns-item" onClick={addWaonArea}>
+                <Image src="/img/icon-square-plus.svg" alt="和音追加" width="20" height="20" />
+                <span className="editBtns-item-label">枠追加</span>
+              </button>
+              <button type="button" className="editBtns-item is-copy" onClick={eraseOnpu}>
+                <Image src="/img/icon-remove-onpu.svg" alt="音符削除(BackSpace)" width="20" height="20" />
+                <span className="editBtns-item-label">音符削除 (BackSpace)</span>
+              </button>
+              <button
+                className="editBtns-item kigouBtn"
+                onClick={addSharp}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    addSharp;
+                  }
+                }}
+                type="button"
+              >
+                <span className="kigouBtn-imgWrap">
+                  <Image src="/img/sharp.svg" alt="シャープ" fill />
+                </span>
+              </button>
+              <button
+                className="editBtns-item kigouBtn"
+                onClick={addFlat}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    addFlat;
+                  }
+                }}
+                type="button"
+              >
+                <span className="kigouBtn-imgWrap">
+                  <Image src="/img/flat.svg" alt="フラット" fill />
+                </span>
+              </button>
+              <div className="editBtns-item">
+                <section className="editBtns-item-select">
+                  <h2 className="editBtns-item-select-title">カテゴリー</h2>
+                  <CategoryOption
+                    setSelectedCateId={setSelectedCateId}
+                    defaultId={selectedCateId}
+                    addPresetOption={false}
+                  />
+                  <div className="editBtns-item-select-newBtn">
+                    <button className="btn-plus" data-micromodal-trigger="modal-1" type="button">
+                      +
                     </button>
                   </div>
-                  <div className="editBtns-item-one">
-                    <button
-                      className="editBtns-item-one-kigouBtn"
-                      onClick={addFlat}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          addFlat;
-                        }
-                      }}
-                      type="button"
-                    >
-                      <span className="editBtns-item-one-kigouBtn-imgWrap">
-                        <Image src="/img/flat.svg" alt="フラット" fill />
-                      </span>
-                    </button>
-                  </div>
-                </div>
+                </section>
               </div>
             </div>
             <div className="actionArea">
               <div className="actionBtns">
                 <div className="actionBtns-row">
                   <div className="editDescription">
-                    <p>上段の音符をクリックして、和音を作ってください。</p>
+                    <p>五線譜をクリックして、和音を作ってください。</p>
                   </div>
                 </div>
-                <div className="actionBtns-row is-group">
-                  <section className="actionBtns-row-group">
-                    <h2 className="actionBtns-row-group-title">カテゴリー</h2>
-                    <CategoryOption
-                      setSelectedCateId={setSelectedCateId}
-                      defaultId={selectedCateId}
-                      addPresetOption={false}
-                    />
-                    <div className="actionBtns-row-group-newBtn">
-                      <button className="btn-plus" data-micromodal-trigger="modal-1" type="button">
-                        +
-                      </button>
+              </div>
+            </div>
+          </div>
+          <div className="addMain">
+            <div className="addMain-inner">
+              <div className="addMain-gosen">
+                <Image src="/img/gosen-add.svg" alt="" fill />
+              </div>
+              <div className="onpuContainer">
+                {selectedWaons.map((waon, index) => {
+                  return (
+                    <div key={waon.index} className="onpuContainer-item">
+                      <div className="addOnpuClickArea">
+                        <div className="addOnpuClickArea-parts is-righthand">
+                          {ADD_ONPU_TOONKIGOU.map((onpu) => {
+                            return (
+                              <button
+                                key={onpu.dataNum}
+                                type="button"
+                                className="addOnpuClickArea-parts-btn"
+                                data-num={onpu.dataNum}
+                                data-onpuname={onpu.onpuName}
+                                onClick={() => {
+                                  onClickSelected(onpu.dataNum, index);
+                                }}
+                              ></button>
+                            );
+                          })}
+                        </div>
+                        <div className="addOnpuClickArea-parts is-lefthand">
+                          {ADD_ONPU_HEONKIGOU.map((onpu) => {
+                            return (
+                              <button
+                                key={onpu.dataNum}
+                                type="button"
+                                className="addOnpuClickArea-parts-btn"
+                                data-num={onpu.dataNum}
+                                data-onpuname={onpu.onpuName}
+                                onClick={() => {
+                                  onClickSelected(onpu.dataNum, index);
+                                }}
+                              ></button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        className="onpuContainer-item-main"
+                        onClick={(e) => {
+                          const target = e.target as HTMLElement;
+                          target.focus();
+                        }}
+                        onKeyDown={(e) => {
+                          //focusされているかどうか判定
+                          if (e.target === document.activeElement) {
+                            if (e.key === "Backspace") {
+                              eraseWaon(waon.index);
+                            }
+                          }
+                        }}
+                      >
+                        <div className="onpuContainer-item-main-parts is-righthand js-onpuslide">
+                          <div className="onpuTama">
+                            {waon.notes?.map((onpu, noteIndex) => {
+                              return (
+                                onpu.num <= 18 && (
+                                  <button
+                                    key={onpu.num}
+                                    type="button"
+                                    className={`onpuTama-one js-onpuslide-one ${onpu.isSelected ? "is-select" : ""} ${
+                                      onpu.sharp ? "is-sharp" : ""
+                                    } ${onpu.flat ? "is-flat" : ""}`}
+                                    tabIndex={0}
+                                    data-num={onpu.num}
+                                    onClick={(e) => {
+                                      toggleNoteSelect(e, noteIndex, waon);
+                                    }}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Backspace") {
+                                        e.stopPropagation();
+                                        eraseOnpu();
+                                      }
+                                      if (e.key === "Enter") {
+                                        toggleNoteSelect(e, noteIndex, waon);
+                                      }
+                                    }}
+                                  >
+                                    <Image src="/img/onpu.svg" alt="" fill />
+                                  </button>
+                                )
+                              );
+                            })}
+                          </div>
+                          <div className="onpuLine">
+                            <span className="onpuLine-item is-top1"></span>
+                            <span className="onpuLine-item is-top2"></span>
+                            <span className="onpuLine-item is-bottom1"></span>
+                            <span className="onpuLine-item is-bottom2"></span>
+                          </div>
+                        </div>
+                        <div className="onpuContainer-item-main-parts is-lefthand js-onpuslide">
+                          <div className="onpuTama">
+                            {waon.notes?.map((onpu, noteIndex) => {
+                              return (
+                                onpu.num >= 19 && (
+                                  <button
+                                    key={onpu.num}
+                                    type="button"
+                                    className={`onpuTama-one js-onpuslide-one ${onpu.isSelected ? "is-select" : ""} ${
+                                      onpu.sharp ? "is-sharp" : ""
+                                    } ${onpu.flat ? "is-flat" : ""}`}
+                                    tabIndex={0}
+                                    data-num={onpu.num}
+                                    onClick={(e) => {
+                                      toggleNoteSelect(e, noteIndex, waon);
+                                    }}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Backspace") {
+                                        eraseOnpu();
+                                      }
+                                      if (e.key === "Enter") {
+                                        toggleNoteSelect(e, noteIndex, waon);
+                                      }
+                                    }}
+                                  >
+                                    <Image src="/img/onpu.svg" alt="" fill />
+                                  </button>
+                                )
+                              );
+                            })}
+                          </div>
+                          <div className="onpuLine">
+                            <span className="onpuLine-item is-top1"></span>
+                            <span className="onpuLine-item is-top2"></span>
+                            <span className="onpuLine-item is-bottom1"></span>
+                            <span className="onpuLine-item is-bottom2"></span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="onpuContainer-item-opt">
+                        <button type="button" className="onpuContainer-item-opt-sound" onClick={playWaon}>
+                          <span className="onpuContainer-item-opt-sound-btn">♪</span>
+                        </button>
+                        <div className="onpuContainer-item-opt-code">
+                          <input type="text" name="code" defaultValue={waon.code} />
+                        </div>
+                      </div>
+                      <div className="onpuContainer-item-delete">
+                        <button
+                          className="onpuContainer-item-delete-btn"
+                          type="button"
+                          onClick={() => {
+                            eraseWaon(waon.index);
+                          }}
+                        >
+                          <Image src="/img/icon-trash.svg" alt="削除する" width="20" height="25" />
+                        </button>
+                      </div>
                     </div>
-                  </section>
-                </div>
+                  );
+                })}
               </div>
             </div>
           </div>
