@@ -4,17 +4,18 @@
 .onpuContainer{
 	position: absolute;
 	top: 0;
-	right: 15%;
-	width: 60%;
+	right: 10%;
+	width: 75%;
 	height: 110%;
 	display: flex;
 	aspect-ratio: 2.146;
 	.startPage & {
-		justify-content: space-between;
+		justify-content: space-evenly;
 	}
+
 	&-item{
 		position: relative;
-		width: 20%;
+		width: 17%;
 		height: 100%;
 		background: rgba(85, 255, 0, 0.171);
 		.is-preset &{
@@ -25,8 +26,14 @@
 		.startPage & {
 			background: transparent;
 		}
+		.myWaon & {
+			margin-left: 5%;
+		}
 		& + &{
 			margin-left: 5%;
+			.startPage & {
+				margin-left: 0;
+			}
 		}
 		&-main{
 			appearance: none;
@@ -78,7 +85,8 @@
 				font-weight: bold;
 				text-align: center;
 				@include font-roboto;
-				font-weight: normal;;
+				font-weight: normal;
+				white-space: nowrap;
 				input{
 					display: block;
 					width: 100%;
@@ -215,7 +223,7 @@
 		&.is-top1{
 			opacity: 0;
 			.is-righthand & {
-				top: 9%;
+				top: 10%;
 			}
 			.is-lefthand & {
 			}
