@@ -2,11 +2,11 @@
 
 .code{
   display: flex;
-  justify-content: space-between;
-  width: 60%;
+  justify-content: space-evenly;
+  width: 75%;
   margin-bottom: 50px;
   padding-top: 70px;
-  margin: 0 15% 0 auto;
+  margin: 0 10% 0 auto;
   font-weight: bold;
   text-align:center;
   &-one{
@@ -17,6 +17,7 @@
     height: 100%;
     font-size: 4rem;
     text-align: center;
+    white-space: nowrap;
   }
 }
 .gosenContainer{
