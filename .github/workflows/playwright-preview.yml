@@ -10,6 +10,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      DEV_DOMAIN: ${{ secrets.DEV_DOMAIN }}
+      BASE_DOMAIN: ${{ secrets.BASE_DOMAIN }}
+
     steps:
       - uses: actions/checkout@v3
 
