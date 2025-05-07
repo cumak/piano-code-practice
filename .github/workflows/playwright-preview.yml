@@ -31,6 +31,9 @@ jobs:
 
       - name: Run Playwright tests
         run: npx playwright test
+
+      - name: Build
+        run: bun run build
         
       - name: Deploy to Vercel
         if: success()
