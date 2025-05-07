@@ -44,4 +44,4 @@ jobs:
         
       - name: Deploy to Vercel
         if: success()
-        run: npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm --project=piano-code-practice-awpi
+        run: npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm
