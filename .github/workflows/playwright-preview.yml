@@ -26,3 +26,7 @@ jobs:
 
       - name: Run Playwright tests
         run: npx playwright test
+        
+      - name: Deploy to Vercel
+        if: success()
+        run: npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --confirm
