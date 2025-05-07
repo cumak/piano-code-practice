@@ -11,6 +11,9 @@ const baseURL =
     ? process.env.DEV_DOMAIN
     : "http://localhost:3000");
 
+console.log("branch", branch);
+console.log("baseURL", baseURL);
+
 export default defineConfig({
   use: {
     baseURL,
