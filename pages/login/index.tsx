@@ -67,7 +67,7 @@ const Login: FC = () => {
                 </span>
               </label>
               <div className="formBtn">
-                <button className="btn-s is-orange" type="button" onClick={logIn}>
+                <button className="btn-s is-orange" type="button" onClick={logIn} aria-label="ログイン">
                   ログイン
                 </button>
               </div>

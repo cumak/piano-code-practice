@@ -5,14 +5,13 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import type { FC } from "react";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "src/auth/AuthProvider";
 
 import type { GetAllCate, GetWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { getAllCate, getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
 import { playWaon } from "@/assets/js/playWaon";
+import { AuthContext } from "@/auth/AuthProvider";
 import { GUEST_ID } from "@/constants";
-import { auth } from "@/utils/firebase";
 
 const db: Firestore = getFirestore();
 

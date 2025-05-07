@@ -2,7 +2,7 @@
  * @type {import('next').NextConfig}
  **/
 
-module.exports = {
+export default {
   env: {
     FIREBASE_KEY: process.env.FIREBASE_KEY,
     FIREBASE_DOMAIN: process.env.FIREBASE_DOMAIN,
