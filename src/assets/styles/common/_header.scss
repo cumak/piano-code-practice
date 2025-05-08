@@ -7,13 +7,19 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
-  height: 80px;
   padding: 0 10px;
   background: #9696962a;
   text-align: right;
   z-index: 3;
-  @include tab{
-    height: 60px;
+  &-titleArea{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    height: 80px;
+    @include tab{
+      height: 60px;
+    }
   }
   &-info{
     position: relative;
@@ -53,16 +59,23 @@
 
 .logo{
   margin-top: 12px;
+  @include tab{
+    margin-top: 5px;
+  }
   &-img{
     position: relative;
     display: block;
     width: 100px;
     aspect-ratio: 1.78;
     @include tab{
-      width: auto;
-      height: 90%;
+      width: 80px;
     }
   }
+}
+
+.pageTitle{
+  font-size: 1.6rem;
+  font-weight: bold;
 }
 
 .headerAccount{

@@ -340,7 +340,6 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
     <main className="main">
       <form action="">
         <div className="mainWrapper">
-          <h1 className="title-l">{isEditMode ? <>和音編集</> : <>和音作成</>}</h1>
           <div className="operationArea">
             <div className="editBtns">
               <button type="button" className="editBtns-item" onClick={addWaonArea}>

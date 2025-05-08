@@ -76,7 +76,7 @@ const Mypage: FC = () => {
   }
 
   return (
-    <Layout>
+    <Layout pageTitle="マイ和音">
       <main className="main">
         <div className="mainWrapper">
           <div className="wrapper">

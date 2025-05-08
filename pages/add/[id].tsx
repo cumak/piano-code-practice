@@ -48,7 +48,11 @@ const Id: FC = () => {
     setData(waonGroup);
   }
 
-  return <Layout>{fetchedWGProps?.waonGroup && <Edit isEditMode fetchedWGProps={fetchedWGProps} />}</Layout>;
+  return (
+    <Layout pageTitle="和音編集">
+      {fetchedWGProps?.waonGroup && <Edit isEditMode fetchedWGProps={fetchedWGProps} />}
+    </Layout>
+  );
 };
 
 export default Id;

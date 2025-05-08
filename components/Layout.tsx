@@ -7,7 +7,12 @@ import { AuthContext } from "@/auth/AuthProvider";
 import { GUEST_ID } from "@/constants";
 import { auth } from "@/utils/firebase";
 
-export function Layout({ children }) {
+type LayoutProps = {
+  children: React.ReactNode;
+  pageTitle?: string;
+};
+
+export function Layout({ children, pageTitle }: LayoutProps) {
   const router = useRouter();
   const pathname = router.pathname;
   const { currentUser } = useContext(AuthContext);
@@ -50,10 +55,13 @@ export function Layout({ children }) {
     isShowPage && (
       <div className="container">
         <header className="header">
-          <div className="logo">
-            <Link className="logo-img" href="/">
-              <Image src="/img/logo.svg" fill alt="ロゴ" />
-            </Link>
+          <div className="header-titleArea">
+            <div className="logo">
+              <Link className="logo-img" href="/">
+                <Image src="/img/logo.svg" fill alt="ロゴ" />
+              </Link>
+            </div>
+            {pageTitle && <h1 className="pageTitle">{pageTitle}</h1>}
           </div>
           <div className="header-info">
             {currentUser?.email === GUEST_ID ? (

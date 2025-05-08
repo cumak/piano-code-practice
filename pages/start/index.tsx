@@ -179,7 +179,7 @@ const Start: FC = () => {
   }
 
   return (
-    <Layout>
+    <Layout pageTitle="Play">
       <main className="main startPage">
         <div className="mainWrapper">
           <div className="userSetting">
