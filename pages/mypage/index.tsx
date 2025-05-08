@@ -90,7 +90,7 @@ const Mypage: FC = () => {
                 プリセット再生のみとなります。
               </p>
             )}
-            <div className="al-r">
+            <div className="myWaonHeadBtns">
               <button
                 className="btn-s"
                 onClick={() => {
@@ -98,6 +98,14 @@ const Mypage: FC = () => {
                 }}
               >
                 プリセットの和音一覧
+              </button>
+              <button
+                className="btn-s"
+                onClick={() => {
+                  return router.push("add");
+                }}
+              >
+                新規登録
               </button>
             </div>
             <div className="myWaon">

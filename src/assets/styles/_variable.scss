@@ -7,12 +7,12 @@ $linkColor:#019ab3;
 $bgColor:#f7f7f7;
 $fontColor: #000;
 
-$w:1000px; //コンテンツ幅
+$w:1300px; //コンテンツ幅
 
 /* mediaquery */
 
-$widthXL  : 1100px; //PC大（コンテンツ幅＋100px）
-$widthLG  : 980px; //PC小
+$widthXL  : 1400px; //PC大（コンテンツ幅＋100px）
+$widthLG  : 1280px; //PC小
 $widthTab : 768px; //タブレット
 
 @mixin lg {

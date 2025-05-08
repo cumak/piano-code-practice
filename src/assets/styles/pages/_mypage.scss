@@ -1,5 +1,11 @@
 @use '../variable' as *;
 
+.myWaonHeadBtns{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 .myWaon{
   display: flex;
   flex-wrap:wrap;
