@@ -11,8 +11,7 @@ export function playWaon(e) {
     const sharp = onpu.classList.contains("is-sharp") ? "#" : "";
     const flat = onpu.classList.contains("is-flat") ? "b" : "";
     const datanumber = onpu.dataset.num;
-    const codeName =
-      TONE_DATA[datanumber][0] + sharp + flat + TONE_DATA[datanumber][1];
+    const codeName = TONE_DATA[datanumber][0] + sharp + flat + TONE_DATA[datanumber][1];
     return codeName;
   });
 
@@ -27,6 +26,6 @@ export function playWaon(e) {
   }).toDestination();
 
   Tone.loaded().then(() => {
-    sampler?.triggerAttackRelease(codeNameArr, 1.5);
+    sampler.triggerAttackRelease(codeNameArr, 1.5);
   });
 }
