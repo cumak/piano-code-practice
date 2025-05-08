@@ -1,6 +1,8 @@
 import { defineConfig } from "@playwright/test";
 
-const branch = process.env.GITHUB_REF_NAME;
+const branch =
+  process.env.GITHUB_BASE_REF || // PRのベースブランチ
+  process.env.GITHUB_REF_NAME; // 通常のpush時などのブランチ名
 const baseURL =
   process.env.BASE_URL ||
   (process.env.NODE_ENV === "development"
