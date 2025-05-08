@@ -1,4 +1,5 @@
 import { Layout } from "@components/Layout";
+import { WaonGroupLayout } from "@components/WaonGroupLayout";
 import type { Firestore } from "firebase/firestore";
 import { deleteDoc, doc, getFirestore } from "firebase/firestore";
 import Image from "next/image";
@@ -141,83 +142,78 @@ const Mypage: FC = () => {
                         <div className="categoryIcon">{`${getTargetCateName(waonGroup.waonGroupData.category)}`}</div>
                       </div>
                     </div>
-                    <div className="addMain">
-                      <div className="addMain-inner">
-                        <div className="addMain-gosen">
-                          <Image src="/img/gosen-add.svg" fill alt="" />
-                        </div>
-                        <div className="onpuContainer">
-                          {waonGroup.waonGroupData.waons.map((waon) => {
-                            return (
-                              <div key={waon.index} className="onpuContainer-item">
-                                <div className="onpuContainer-item-main">
-                                  <div className="onpuContainer-item-main-parts is-righthand js-onpuslide">
-                                    <div className="onpuTama">
-                                      {waon.notes?.map((onpu) => {
-                                        return (
-                                          onpu.num <= 18 && (
-                                            <span
-                                              key={onpu.num}
-                                              className={`onpuTama-one js-onpuslide-one ${
-                                                onpu.isSelected ? "is-select" : ""
-                                              } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
-                                              role="button"
-                                              tabIndex={0}
-                                              data-num={onpu.num}
-                                            >
-                                              <Image src="/img/onpu.svg" alt="" fill />
-                                            </span>
-                                          )
-                                        );
-                                      })}
-                                    </div>
-                                    <div className="onpuLine">
-                                      <span className="onpuLine-item is-top1"></span>
-                                      <span className="onpuLine-item is-top2"></span>
-                                      <span className="onpuLine-item is-bottom1"></span>
-                                      <span className="onpuLine-item is-bottom2"></span>
-                                    </div>
+                    <WaonGroupLayout>
+                      <div className="onpuContainer">
+                        {waonGroup.waonGroupData.waons.map((waon) => {
+                          return (
+                            <div key={waon.index} className="onpuContainer-item">
+                              <div className="onpuContainer-item-main">
+                                <div className="onpuContainer-item-main-parts is-righthand js-onpuslide">
+                                  <div className="onpuTama">
+                                    {waon.notes?.map((onpu) => {
+                                      return (
+                                        onpu.num <= 18 && (
+                                          <span
+                                            key={onpu.num}
+                                            className={`onpuTama-one js-onpuslide-one ${
+                                              onpu.isSelected ? "is-select" : ""
+                                            } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
+                                            role="button"
+                                            tabIndex={0}
+                                            data-num={onpu.num}
+                                          >
+                                            <Image src="/img/onpu.svg" alt="" fill />
+                                          </span>
+                                        )
+                                      );
+                                    })}
                                   </div>
-                                  <div className="onpuContainer-item-main-parts is-lefthand js-onpuslide">
-                                    <div className="onpuTama">
-                                      {waon.notes?.map((onpu) => {
-                                        return (
-                                          onpu.num >= 19 && (
-                                            <span
-                                              key={onpu.num}
-                                              className={`onpuTama-one js-onpuslide-one ${
-                                                onpu.isSelected ? "is-select" : ""
-                                              } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
-                                              role="button"
-                                              tabIndex={0}
-                                              data-num={onpu.num}
-                                            >
-                                              <Image src="/img/onpu.svg" alt="" fill />
-                                            </span>
-                                          )
-                                        );
-                                      })}
-                                    </div>
-                                    <div className="onpuLine">
-                                      <span className="onpuLine-item is-top1"></span>
-                                      <span className="onpuLine-item is-top2"></span>
-                                      <span className="onpuLine-item is-bottom1"></span>
-                                      <span className="onpuLine-item is-bottom2"></span>
-                                    </div>
+                                  <div className="onpuLine">
+                                    <span className="onpuLine-item is-top1"></span>
+                                    <span className="onpuLine-item is-top2"></span>
+                                    <span className="onpuLine-item is-bottom1"></span>
+                                    <span className="onpuLine-item is-bottom2"></span>
                                   </div>
                                 </div>
-                                <div className="onpuContainer-item-opt">
-                                  <button type="button" className="onpuContainer-item-opt-sound" onClick={playWaon}>
-                                    <span className="onpuContainer-item-opt-sound-btn">♪</span>
-                                  </button>
-                                  <div className="onpuContainer-item-opt-code">{waon.code}</div>
+                                <div className="onpuContainer-item-main-parts is-lefthand js-onpuslide">
+                                  <div className="onpuTama">
+                                    {waon.notes?.map((onpu) => {
+                                      return (
+                                        onpu.num >= 19 && (
+                                          <span
+                                            key={onpu.num}
+                                            className={`onpuTama-one js-onpuslide-one ${
+                                              onpu.isSelected ? "is-select" : ""
+                                            } ${onpu.sharp ? "is-sharp" : ""} ${onpu.flat ? "is-flat" : ""}`}
+                                            role="button"
+                                            tabIndex={0}
+                                            data-num={onpu.num}
+                                          >
+                                            <Image src="/img/onpu.svg" alt="" fill />
+                                          </span>
+                                        )
+                                      );
+                                    })}
+                                  </div>
+                                  <div className="onpuLine">
+                                    <span className="onpuLine-item is-top1"></span>
+                                    <span className="onpuLine-item is-top2"></span>
+                                    <span className="onpuLine-item is-bottom1"></span>
+                                    <span className="onpuLine-item is-bottom2"></span>
+                                  </div>
                                 </div>
                               </div>
-                            );
-                          })}
-                        </div>
+                              <div className="onpuContainer-item-opt">
+                                <button type="button" className="onpuContainer-item-opt-sound" onClick={playWaon}>
+                                  <span className="onpuContainer-item-opt-sound-btn">♪</span>
+                                </button>
+                                <div className="onpuContainer-item-opt-code">{waon.code}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    </div>
+                    </WaonGroupLayout>
                   </div>
                 );
               })}
