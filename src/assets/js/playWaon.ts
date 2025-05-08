@@ -3,7 +3,8 @@ import * as Tone from "tone";
 import { TONE_DATA } from "@/constants";
 
 // ♪マーク押して音再生
-export function playWaon(e) {
+export async function playWaon(e) {
+  await Tone.start(); // ipadで音が出ないので、最初にトリガーを発火させる
   const target = e.target;
   const container = target.closest(".onpuContainer-item");
   const onpus = container.querySelectorAll(".onpuTama-one");
@@ -15,6 +16,10 @@ export function playWaon(e) {
     return codeName;
   });
 
+  tonePlay(codeNameArr);
+}
+
+function tonePlay(codeNameArr) {
   const sampler = new Tone.Sampler({
     urls: {
       C4: "C4.mp3",
@@ -26,6 +31,6 @@ export function playWaon(e) {
   }).toDestination();
 
   Tone.loaded().then(() => {
-    sampler.triggerAttackRelease(codeNameArr, 1.5);
+    sampler?.triggerAttackRelease(codeNameArr, 1.5);
   });
 }
