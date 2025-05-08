@@ -67,7 +67,7 @@ const Category: FC = () => {
   }
 
   return (
-    <Layout>
+    <Layout pageTitle="カテゴリー">
       <main className="main">
         <div className="mainWrapper">
           <div className="titleArea">

@@ -5,14 +5,13 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import type { FC } from "react";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "src/auth/AuthProvider";
 
 import type { GetAllCate, GetWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { getAllCate, getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
 import { playWaon } from "@/assets/js/playWaon";
+import { AuthContext } from "@/auth/AuthProvider";
 import { GUEST_ID } from "@/constants";
-import { auth } from "@/utils/firebase";
 
 const db: Firestore = getFirestore();
 
@@ -77,7 +76,7 @@ const Mypage: FC = () => {
   }
 
   return (
-    <Layout>
+    <Layout pageTitle="マイ和音">
       <main className="main">
         <div className="mainWrapper">
           <div className="wrapper">
@@ -91,7 +90,7 @@ const Mypage: FC = () => {
                 プリセット再生のみとなります。
               </p>
             )}
-            <div className="al-r">
+            <div className="myWaonHeadBtns">
               <button
                 className="btn-s"
                 onClick={() => {
@@ -99,6 +98,14 @@ const Mypage: FC = () => {
                 }}
               >
                 プリセットの和音一覧
+              </button>
+              <button
+                className="btn-s"
+                onClick={() => {
+                  return router.push("add");
+                }}
+              >
+                新規登録
               </button>
             </div>
             <div className="myWaon">

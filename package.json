@@ -6,19 +6,19 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "jest --env=jsdom --verbose"
+    "test": "playwright test",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@next/swc-darwin-arm64": "^15.3.2",
+    "@playwright/test": "^1.52.0",
     "@styled-jsx/plugin-sass": "^4.0.2",
     "@testing-library/dom": "7.29.2",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^14.0.0",
+    "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.4.3",
-    "@types/jest": "27",
     "@types/micromodal": "^0.3.3",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
-    "babel-jest": "26.6.3",
     "eslint": "^8.33.0",
     "eslint-config-next": "^13.1.6",
     "eslint-config-prettier": "^8.6.0",
@@ -27,14 +27,12 @@
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "firebase": "^9.17.1",
-    "jest": "27",
-    "jest-css-modules": "2.1.0",
-    "jest-environment-jsdom": "27",
     "micromodal": "^0.4.10",
     "msw": "^1.1.0",
     "next": "^13.1.6",
     "next-page-tester": "^0.33.0",
     "nprogress": "^0.2.0",
+    "playwright": "^1.52.0",
     "prop-types": "^15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -43,12 +41,14 @@
     "sass-loader": "^13.2.0",
     "setimmediate": "^1.0.5",
     "swr": "^2.0.3",
-    "tone": "^14.7.77",
-    "ts-jest": "27"
+    "tone": "^15.1.22"
   },
   "devDependencies": {
     "@types/node": "^18.14.6",
     "@types/react": "^18.0.27",
-    "typescript": "^4.9.5"
-  }
+    "typescript": "^4.9.5",
+    "bun-types": "latest"
+  },
+  "module": "index.ts",
+  "type": "module"
 }

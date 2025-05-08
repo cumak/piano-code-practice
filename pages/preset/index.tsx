@@ -1,11 +1,11 @@
 import { Layout } from "@components/Layout";
 import Image from "next/image";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "src/auth/AuthProvider";
 
 import type { GetAllCate, GetWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { getAllCate, getWaonGroupDataWithId } from "@/assets/js/GetFromDB";
 import { onpuSlide } from "@/assets/js/OnpuSlide";
+import { AuthContext } from "@/auth/AuthProvider";
 import { PRESET_ID } from "@/constants";
 
 const PresetPage = () => {

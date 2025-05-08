@@ -4,7 +4,8 @@
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
-	margin-top: 40px;
+	max-width: 1000px;
+	margin: 40px auto;
 }
 
 .addMain{
@@ -151,6 +152,8 @@
 				min-width: 240px;
 				flex:1;
 				padding: 13px;
+				background: #fff;
+				color: #000;
 			}
 			&-newBtn{
 				margin-left: 10px;

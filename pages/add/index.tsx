@@ -6,7 +6,7 @@ import type { FC } from "react";
 
 const Add: FC = () => {
   return (
-    <Layout>
+    <Layout pageTitle="和音作成">
       <Edit />
     </Layout>
   );

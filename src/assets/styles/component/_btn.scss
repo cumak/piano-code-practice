@@ -37,6 +37,9 @@
   border: 1px solid #ccc;
   transition: all .3s;
   cursor: pointer;
+  @include tab{
+    padding-block: 6px;
+  }
   &.is-orange{
     background: #ff8800;
     border: none;

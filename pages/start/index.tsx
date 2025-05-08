@@ -28,8 +28,8 @@ const Start: FC = () => {
 
   const [btnStartOrStop, setbtnStartOrStop] = useState<"start" | "stop">("start");
   const [selectedCateId, setSelectedCateId] = useState<string>("default");
-  const [timer, setTimer] = useState<NodeJS.Timer>();
-  const [qaTimer, setQaTimer] = useState<NodeJS.Timer>();
+  const [timer, setTimer] = useState<NodeJS.Timeout>();
+  const [qaTimer, setQaTimer] = useState<NodeJS.Timeout>();
 
   useEffect(() => {
     init();
@@ -179,7 +179,7 @@ const Start: FC = () => {
   }
 
   return (
-    <Layout>
+    <Layout pageTitle="Play">
       <main className="main startPage">
         <div className="mainWrapper">
           <div className="userSetting">

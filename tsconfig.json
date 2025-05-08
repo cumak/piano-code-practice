@@ -11,6 +11,9 @@
       "@/*": [
         "src/*"
       ],
+      "@pages/*": [
+        "pages/*"
+      ],
       "@public/*": [
         "public/*"
       ],
@@ -37,7 +40,7 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.js"
-  ],
+, "next.config.cjs"  ],
   "exclude": [
     "node_modules", ".next", "out"
   ]
