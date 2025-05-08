@@ -291,16 +291,16 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
           category: selectedCateId,
         });
         alert("和音を追加しました。");
+        // 新規追加モードなら登録後クリアする
+        if (!isEditMode) {
+          setSelectedWaons([]);
+        }
       } catch (error) {
         if (user.email === GUEST_ID) {
           alert("ゲストログインでは和音作成はできません。");
         }
         console.error(error);
       }
-    }
-    // 新規追加モードなら登録後クリアする
-    if (!isEditMode) {
-      setSelectedWaons([]);
     }
   }
 
@@ -338,7 +338,7 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
 
   return (
     <main className="main">
-      <form action="">
+      <form action="" onSubmit={(e) => e.preventDefault()}>
         <div className="mainWrapper">
           <div className="operationArea">
             <div className="editBtns">
@@ -398,7 +398,7 @@ export const Edit: FC<Props> = ({ isEditMode = false, fetchedWGProps }) => {
               <div className="actionBtns">
                 <div className="actionBtns-row">
                   <div className="editDescription">
-                    <p>五線譜をクリックして、和音を作ってください。</p>
+                    <p>「枠追加」で枠を追加し、五線譜をクリックして和音を作ってください。</p>
                   </div>
                 </div>
               </div>
